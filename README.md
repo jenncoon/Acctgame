@@ -1,6 +1,8 @@
 # Boardwalk Books LLC: Accounting Cycle Game
 ### Crestwood Heights
 
+[![DOI](https://zenodo.org/badge/1209041607.svg)](https://doi.org/10.5281/zenodo.19989476)
+
 An interactive, browser-based accounting cycle game for introductory
 financial accounting students. Players take the role of accountant for
 Boardwalk Books LLC, a real estate company investing across the fictional
@@ -66,5 +68,7 @@ https://sites.google.com/view/jennifercoon/the-engagement-lab/cycle-game
 
 ## Cite This Resource
 
+[![DOI](https://zenodo.org/badge/1209041607.svg)](https://doi.org/10.5281/zenodo.19989476)
+
 > Coon, J. (2026). *Boardwalk Books LLC: Accounting Cycle Game*.
-> https://doi.org/[ZENODO-DOI-PLACEHOLDER]
+> https://doi.org/10.5281/zenodo.19989476
