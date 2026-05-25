@@ -1028,10 +1028,17 @@ function handleProperty(sp){
   const owner=ownership[sp.id];
   if(owner===undefined){
     if(playerCash>=sp.price){
-      const dotColor=sp.color&&PROP_CSS[sp.color]?`var(${PROP_CSS[sp.color]})`:'#999';
-      document.getElementById('decision-title').innerHTML=`<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${dotColor};vertical-align:middle;margin-right:8px;"></span>Buy ${sp.name}?`;
-      document.getElementById('decision-desc').innerHTML=`<strong>${sp.name}</strong> available for <strong>$${sp.price}</strong>. You have $${playerCash.toLocaleString()}.`;
-      document.getElementById('decision-overlay').classList.add('active');
+      const forcedPurchase=(gameLevel===1||gameLevel===3);
+      if(forcedPurchase){
+        showJE({type:'buy',desc:`<strong>Purchase ${sp.name}:</strong> Record the purchase for $${sp.price} cash.`,
+          correctEntries:[{account:'Property Asset',debit:sp.price,credit:0},{account:'Cash',debit:0,credit:sp.price}],
+          onComplete:()=>{playerCash-=sp.price;ownership[sp.id]='player';renderOwnership();renderScoreboard();updatePropertiesList();addToLog(`Bought ${sp.name}: -$${sp.price}`);endTurn();}});
+      } else {
+        const dotColor=sp.color&&PROP_CSS[sp.color]?`var(${PROP_CSS[sp.color]})`:'#999';
+        document.getElementById('decision-title').innerHTML=`<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${dotColor};vertical-align:middle;margin-right:8px;"></span>Buy ${sp.name}?`;
+        document.getElementById('decision-desc').innerHTML=`<strong>${sp.name}</strong> available for <strong>$${sp.price}</strong>. You have $${playerCash.toLocaleString()}.`;
+        document.getElementById('decision-overlay').classList.add('active');
+      }
     } else {updateStatus(`${playerName} can't afford ${sp.name}.`);setTimeout(endTurn,1500);}
   } else if(owner==='player'){
     updateStatus(`You own ${sp.name}. No transaction.`);setTimeout(endTurn,1200);
@@ -1100,7 +1107,7 @@ function buyProperty(){
     correctEntries:[{account:'Property Asset',debit:sp.price,credit:0},{account:'Cash',debit:0,credit:sp.price}],
     onComplete:()=>{playerCash-=sp.price;ownership[sp.id]='player';renderOwnership();renderScoreboard();updatePropertiesList();addToLog(`Bought ${sp.name}: -$${sp.price}`);endTurn();}});
 }
-function passProperty(){document.getElementById('decision-overlay').classList.remove('active');updateStatus(`${playerName} passed.`);endTurn();}
+function passProperty(){if(gameLevel===1||gameLevel===3){return;}document.getElementById('decision-overlay').classList.remove('active');updateStatus(`${playerName} passed.`);endTurn();}
 
 // CARDS
 let pendingCard=null;
@@ -2160,10 +2167,14 @@ function buildReflectionCard(){
   ctx.fillText(`Score: ${finalScore}/90`,W-48,108);
   ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='11px Arial'; ctx.textAlign='left';
   ctx.fillText(`Date: ${new Date().toLocaleDateString()}`,48,126);
-  ctx.fillStyle='rgba(255,159,28,0.3)'; ctx.fillRect(40,138,W-80,1);
-  ctx.fillStyle='#FF9F1C'; ctx.font='bold 12px Arial'; ctx.fillText('REFLECTION',48,160);
+  const levelLabel=gameLevel===1?'Level 1: Getting Started':gameLevel===2?'Level 2: Building Equity':'Level 3: Full Portfolio';
+  const stdLabel=accountingStandard==='ifrs'?'IFRS':'US GAAP';
+  ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='11px Arial'; ctx.textAlign='left';
+  ctx.fillText(`Level: ${levelLabel}  \u2022  Standard: ${stdLabel}`,48,142);
+  ctx.fillStyle='rgba(255,159,28,0.3)'; ctx.fillRect(40,154,W-80,1);
+  ctx.fillStyle='#FF9F1C'; ctx.font='bold 12px Arial'; ctx.fillText('REFLECTION',48,176);
   ctx.fillStyle='white'; ctx.font='13px Arial';
-  const maxW=W-96,lineH=20; let y=178,line='';
+  const maxW=W-96,lineH=20; let y=194,line='';
   reflectionText.split(' ').forEach(word=>{const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxW&&line){if(y>H-40){ctx.fillText('...',48,y);return;}ctx.fillText(line,48,y);line=word;y+=lineH;}else line=test;});
   if(y<=H-40&&line) ctx.fillText(line,48,y);
   ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='10px Arial'; ctx.textAlign='center';
