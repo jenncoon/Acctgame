@@ -1069,8 +1069,8 @@ function processPropMgmtCard(card){
   if(card.type==='pm-ap'){
     showJE({
       type:'pm-ap',
-      desc:`<strong>${card.acct}:</strong> ${card.text} Record the invoice for $${card.amount}.`,
-      correctEntries:[{account:card.acct,debit:card.amount,credit:0},{account:'Accounts Payable',debit:0,credit:card.amount}],
+      desc:`<strong>${acctName(card.acct)}:</strong> ${card.text} Record the invoice for $${card.amount}. Credit: ${acctName('Accounts Payable')}.`,
+      correctEntries:[{account:card.acct,debit:card.amount,credit:0},{account:coaName(acctName('Accounts Payable')),debit:0,credit:card.amount}],
       onComplete:()=>{addToLog(`${card.acct}: $${card.amount} (on account)`);endTurn();}
     });
   } else if(card.type==='pm-deferred'){
