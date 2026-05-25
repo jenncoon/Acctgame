@@ -77,7 +77,7 @@ body { background:linear-gradient(135deg,#0d1033 0%,#1a2060 50%,#0d1033 100%); m
 /* ── SETUP ── */
 .setup-screen { position:fixed; inset:0; z-index:600; background:linear-gradient(135deg,#0d1033 0%,#1a2060 50%,#0d1033 100%); display:flex; align-items:flex-start; justify-content:center; padding:40px 20px 20px; overflow-y:auto; }
 .setup-screen[hidden] { display:none; }
-.setup-box { background:var(--white); border-radius:16px; max-width:540px; width:100%; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.6); }
+.setup-box { background:var(--white); border-radius:16px; max-width:540px; width:100%; overflow:visible; box-shadow:0 20px 60px rgba(0,0,0,.6); }
 .setup-header { background:var(--violet); padding:24px 32px; text-align:center; border-bottom:5px solid var(--orange); }
 .setup-logo { font-family:'Bungee',cursive; font-size:clamp(1.1rem,3.5vw,1.7rem); color:var(--orange); display:block; letter-spacing:1px; margin-bottom:4px; }
 .setup-sub { font-size:.875rem; color:rgba(255,255,255,.7); letter-spacing:2px; text-transform:uppercase; }
@@ -434,6 +434,17 @@ input[type=number] { -moz-appearance:textfield; appearance:textfield; }
   .monopoly-board { grid-template-columns:48px repeat(9,34px) 48px; grid-template-rows:48px repeat(9,34px) 48px; }
   .space { font-size:.65rem; }
 }
+
+.level-selector-wrap { margin-top:16px; margin-bottom:4px; }
+.level-selector-label { font-size:1rem; font-weight:700; color:var(--violet); letter-spacing:1px; margin-bottom:10px; display:block; }
+.level-opt { display:flex; align-items:center; gap:14px; background:#1a2060; border:2px solid rgba(255,255,255,.2); border-radius:10px; padding:14px 16px; margin-bottom:10px; cursor:pointer; transition:border-color .2s, background .2s; text-align:left; width:100%; min-height:52px; touch-action:manipulation; color:white; font-family:Arial,sans-serif; }
+.level-opt:hover, .level-opt.selected { border-color:#FF9F1C; background:#262D68; }
+.level-opt:hover .level-badge, .level-opt.selected .level-badge { background:#FF9F1C; color:#262D68; }
+.level-badge { min-width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.2); color:white; font-family:'Bungee',cursive; font-size:1.1rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .2s, color .2s; }
+.level-info { display:flex; flex-direction:column; gap:3px; }
+.level-title { font-family:'Bungee',cursive; font-size:1rem; color:white; letter-spacing:.5px; }
+.level-desc { font-size:.875rem; color:rgba(255,255,255,.85); line-height:1.4; }
+.level-txn { font-size:.8rem; color:#FF9F1C; margin-top:2px; font-weight:700; }
 </style>
 </head>
 <body>
@@ -450,29 +461,61 @@ input[type=number] { -moz-appearance:textfield; appearance:textfield; }
       <span style="display:block;font-size:.75rem;color:rgba(255,255,255,.80);margin-top:6px;letter-spacing:.5px;">&#169; 2026 Jennifer Coon. All rights reserved. Free for educational use. Not for resale.</span>
     </div>
     <div class="setup-body">
-      <div class="setup-rules"><strong>Your Mission:</strong> You are the accountant for Boardwalk Books LLC, a real estate company investing across Crestwood Heights. Play 2 rounds recording every transaction. Then complete the full accounting cycle through closing entries.</div>
+      <div class="setup-rules"><strong>Your Mission:</strong> You are the accountant for Boardwalk Books LLC, a real estate company investing across Crestwood Heights. Choose your level, record every transaction, then complete the full accounting cycle through closing entries.</div>
+
       <span class="setup-section-label">Your Name</span>
       <div class="name-row"><div class="player-dot p1-dot" aria-hidden="true"></div><input type="text" class="name-input" id="p1-name" placeholder="Enter your name" autocomplete="given-name" aria-label="Your name" aria-required="true"></div>
       <div class="setup-rules" style="margin-top:10px;background:#e8f5e9;border-left-color:#0A713A;">
         <strong>Your opponent:</strong> City Properties Inc. 🏢 plays automatically after each of your turns. When they land on your properties you record rent received. When you land on theirs you pay rent. All journal entries are yours to record.
       </div>
+
+      <div class="level-selector-wrap">
+        <p class="level-selector-label">Select Your Level</p>
+        <div role="radiogroup" aria-label="Game level selection">
+          <button type="button" class="level-opt selected" id="level-btn-1" aria-pressed="true" onclick="setLevel(1)">
+            <span class="level-badge" aria-hidden="true">1</span>
+            <span class="level-info">
+              <span class="level-title">Level 1: Getting Started</span>
+              <span class="level-desc">1 round around the board. All property landings require a purchase transaction.</span>
+              <span class="level-txn">Approx. 8-12 transactions</span>
+            </span>
+          </button>
+          <button type="button" class="level-opt" id="level-btn-2" aria-pressed="false" onclick="setLevel(2)">
+            <span class="level-badge" aria-hidden="true">2</span>
+            <span class="level-info">
+              <span class="level-title">Level 2: Building Equity</span>
+              <span class="level-desc">2 rounds around the board. You choose whether to purchase each property you land on.</span>
+              <span class="level-txn">Approx. 10-16 transactions</span>
+            </span>
+          </button>
+          <button type="button" class="level-opt" id="level-btn-3" aria-pressed="false" onclick="setLevel(3)">
+            <span class="level-badge" aria-hidden="true">3</span>
+            <span class="level-info">
+              <span class="level-title">Level 3: Full Portfolio</span>
+              <span class="level-desc">2 rounds around the board. All property landings require a purchase transaction.</span>
+              <span class="level-txn">Approx. 16-22 transactions</span>
+            </span>
+          </button>
+        </div>
+      </div>
       <div class="setup-rules" style="margin-top:10px;background:#f0f2ff;border-left-color:#262D68;font-size:.875rem;">
         <strong>Accessibility:</strong> This game is designed for desktop or tablet use with a keyboard and mouse. If you use assistive technology or require an accessible format, please contact your instructor.
       </div>
 
+
       <div class="closing-question">
         <p>Does your course use <strong>Retained Earnings</strong> directly in closing entries?</p>
         <div class="closing-opts">
-          <button class="closing-opt" id="close-yes" aria-pressed="true" onclick="setClosingMethod('re')"><span class="co-icon">✅</span>Yes<span class="co-sub">Close directly to Retained Earnings</span></button>
-          <button class="closing-opt" id="close-no"  aria-pressed="false" onclick="setClosingMethod('is')"><span class="co-icon">📊</span>No<span class="co-sub">Use Income Summary first</span></button>
+          <button type="button" class="closing-opt" id="close-yes" aria-pressed="true" onclick="setClosingMethod('re')"><span class="co-icon">✅</span>Yes<span class="co-sub">Close directly to Retained Earnings</span></button>
+          <button type="button" class="closing-opt" id="close-no"  aria-pressed="false" onclick="setClosingMethod('is')"><span class="co-icon">📊</span>No<span class="co-sub">Use Income Summary first</span></button>
         </div>
       </div>
 
       <div class="closing-question">
         <p>Which accounting standards does your course follow?</p>
         <div class="closing-opts">
-          <button class="closing-opt" id="std-gaap" aria-pressed="true" onclick="setStandard('gaap')"><span class="co-icon">🇺🇸</span>US GAAP<span class="co-sub">Standard US terminology</span></button>
-          <button class="closing-opt" id="std-ifrs" aria-pressed="false" onclick="setStandard('ifrs')"><span class="co-icon">🌍</span>IFRS<span class="co-sub">International terminology</span></button>
+          <button type="button" class="closing-opt" id="std-gaap" aria-pressed="true" onclick="setStandard('gaap')"><span class="co-icon">🇺🇸</span>US GAAP<span class="co-sub">Standard US terminology</span></button>
+          <button type="button" class="closing-opt" id="std-ifrs" aria-pressed="false" onclick="setStandard('ifrs')"><span class="co-icon">🌍</span>IFRS<span class="co-sub">International terminology</span></button>
         </div>
       </div>
 
@@ -489,6 +532,16 @@ input[type=number] { -moz-appearance:textfield; appearance:textfield; }
       <span class="cpu-modal-title" id="cpu-modal-title">🏢 City Properties Inc.</span>
       <p class="cpu-modal-text" id="cpu-modal-text">Taking their turn...</p>
       <button class="cpu-modal-close" id="cpu-modal-close-btn" onclick="closeCPUModal()">OK, Got It</button>
+    </div>
+  </div>
+
+  <!-- TB reference reminder modal -->
+  <div class="cpu-modal-overlay hidden" id="tb-ref-modal" role="dialog" aria-modal="true" aria-labelledby="tb-ref-modal-title" aria-describedby="tb-ref-modal-desc">
+    <div class="cpu-modal-box">
+      <span class="cpu-modal-title" id="tb-ref-modal-title">📋 Need Prior Data?</span>
+      <p class="cpu-modal-text" id="tb-ref-modal-desc">The toggle buttons at the top of this screen let you view your prior phase work without leaving this page. Look for the <strong style="color:var(--orange);">View</strong> buttons just above the trial balance table.</p>
+      <button class="cpu-modal-close" id="tb-ref-stay-btn" onclick="tbRefModalStay()" style="margin-bottom:10px;">Got It, I'll Use the Toggle</button>
+      <button class="cpu-modal-close" id="tb-ref-back-btn" onclick="tbRefModalGoBack()" style="background:#444;color:white;">Go Back Anyway</button>
     </div>
   </div>
   <header class="game-header">
@@ -554,7 +607,7 @@ input[type=number] { -moz-appearance:textfield; appearance:textfield; }
   <div class="modal-box">
     <div class="modal-header"><span class="modal-tag" id="card-tag">Chance</span><div class="modal-title" id="card-title">Draw a Card</div></div>
     <div class="modal-body">
-      <div class="card-drawn" id="card-display"><span class="card-icon" id="card-icon">🃏</span><span class="card-type" id="card-type">CHANCE</span><span class="card-text" id="card-text"></span></div>
+      <div class="card-drawn" id="card-display" role="region" aria-live="polite" aria-label="Property Management Card"><span class="card-icon" id="card-icon">🃏</span><span class="card-type" id="card-type">CHANCE</span><span class="card-text" id="card-text"></span></div>
       <button class="modal-btn primary" onclick="acknowledgeCard()">Record Entry &rarr;</button>
     </div>
   </div>
@@ -593,7 +646,7 @@ input[type=number] { -moz-appearance:textfield; appearance:textfield; }
       <div class="complete-banner"><h2>Books Closed!</h2><p>You completed the full accounting cycle for Boardwalk Books LLC in Crestwood Heights.</p></div>
       <div class="complete-body">
         <span class="score-label">Your Final Score</span>
-        <span class="score-display" id="final-score-display">0/100</span>
+        <span class="score-display" id="final-score-display">0/90</span>
         <div class="score-breakdown" id="score-breakdown"></div>
         <div class="badge-msg" id="badge-msg" style="display:none;background:#e8f5e9;border-color:var(--green);"><strong>Great work!</strong> Download your reflection card and submit it to your instructor per course instructions.</div>
         <div class="no-badge-msg" id="no-badge-msg" style="display:none;">Download your reflection card and submit it to your instructor per course instructions. Review the phases above to strengthen any areas before your next assessment.</div>
@@ -626,7 +679,7 @@ const SCORM=(function(){
       try{
         api.LMSSetValue('cmi.core.score.raw',score);
         api.LMSSetValue('cmi.core.score.min','0');
-        api.LMSSetValue('cmi.core.score.max','100');
+        api.LMSSetValue('cmi.core.score.max','90');
         api.LMSSetValue('cmi.core.lesson_status','completed');
         api.LMSCommit(''); // commits data without finishing session
       }catch(e){}
@@ -651,7 +704,7 @@ const SPACES=[
   {id:2, name:'Ledger Card',          type:'ledger',      icon:'📒',color:null,    price:0,  rent:0,  group:''},
   {id:3, name:'Elm Avenue',         type:'property',icon:'🏠',color:'purple',price:60, rent:10, group:'purple'},
   {id:4, name:'Income Tax',         type:'tax',     icon:'💸',color:null,    price:0,  rent:100,group:''},
-  {id:5, name:'North Line Station', type:'railroad',icon:'🚂',color:'rr',   price:200,rent:50, group:'rr'},
+  {id:5, name:'Property Management',type:'propmgmt', icon:'📋',color:null,  price:0,  rent:0,  group:''},
   {id:6, name:'Riverside Drive',    type:'property',icon:'🏠',color:'lblue', price:100,rent:20, group:'lblue'},
   {id:7, name:'Risk Card',            type:'risk',  icon:'🃏',color:null,    price:0,  rent:0,  group:''},
   {id:8, name:'Harbor View Lane',   type:'property',icon:'🏠',color:'lblue', price:100,rent:20, group:'lblue'},
@@ -661,7 +714,7 @@ const SPACES=[
   {id:12,name:'Crestwood Electric', type:'utility', icon:'⚡',color:'util',  price:150,rent:40, group:'util'},
   {id:13,name:'Midtown Plaza',      type:'property',icon:'🏠',color:'pink',  price:140,rent:30, group:'pink'},
   {id:14,name:'Financial District', type:'property',icon:'🏠',color:'pink',  price:160,rent:35, group:'pink'},
-  {id:15,name:'South Line Station', type:'railroad',icon:'🚂',color:'rr',   price:200,rent:50, group:'rr'},
+  {id:15,name:'Property Management',type:'propmgmt', icon:'📋',color:null,  price:0,  rent:0,  group:''},
   {id:16,name:'Crestwood Commons',  type:'property',icon:'🏠',color:'orange',price:180,rent:40, group:'orange'},
   {id:17,name:'Ledger Card',          type:'ledger',      icon:'📒',color:null,    price:0,  rent:0,  group:''},
   {id:18,name:'Downtown Square',    type:'property',icon:'🏠',color:'orange',price:180,rent:40, group:'orange'},
@@ -671,7 +724,7 @@ const SPACES=[
   {id:22,name:'Risk Card',            type:'risk',  icon:'🃏',color:null,    price:0,  rent:0,  group:''},
   {id:23,name:'Eastside Crossing',  type:'property',icon:'🏠',color:'red',   price:220,rent:50, group:'red'},
   {id:24,name:'Millbrook Road',     type:'property',icon:'🏠',color:'red',   price:240,rent:55, group:'red'},
-  {id:25,name:'East Line Station',  type:'railroad',icon:'🚂',color:'rr',   price:200,rent:50, group:'rr'},
+  {id:25,name:'Property Management',type:'propmgmt', icon:'📋',color:null,  price:0,  rent:0,  group:''},
   {id:26,name:'Grand Avenue',       type:'property',icon:'🏠',color:'yellow',price:260,rent:60, group:'yellow'},
   {id:27,name:'Lakeshore Drive',    type:'property',icon:'🏠',color:'yellow',price:260,rent:60, group:'yellow'},
   {id:28,name:'Crestwood Water',    type:'utility', icon:'💧',color:'util',  price:150,rent:40, group:'util'},
@@ -681,7 +734,7 @@ const SPACES=[
   {id:32,name:'Pinnacle Park',      type:'property',icon:'🏠',color:'pgreen',price:300,rent:70, group:'pgreen'},
   {id:33,name:'Ledger Card',          type:'ledger',      icon:'📒',color:null,    price:0,  rent:0,  group:''},
   {id:34,name:'Summit Heights',     type:'property',icon:'🏠',color:'pgreen',price:320,rent:75, group:'pgreen'},
-  {id:35,name:'West Line Station',  type:'railroad',icon:'🚂',color:'rr',   price:200,rent:50, group:'rr'},
+  {id:35,name:'Property Management',type:'propmgmt', icon:'📋',color:null,  price:0,  rent:0,  group:''},
   {id:36,name:'Risk Card',            type:'risk',  icon:'🃏',color:null,    price:0,  rent:0,  group:''},
   {id:37,name:'City Hall Tower',    type:'property',icon:'🏢',color:'dblue', price:350,rent:80, group:'dblue'},
   {id:38,name:'Luxury Tax',         type:'luxtax',  icon:'💎',color:null,    price:0,  rent:75, group:''},
@@ -714,6 +767,27 @@ const LEDGER_CARDS=[
   {text:'Collected cash from Accounts Receivable. Receive $60.',type:'ar-collect',amount:60},
 ];
 
+// PROPERTY MANAGEMENT CARDS
+const PROP_MGMT_CARDS=[
+  // Equipment Repair (AP)
+  {text:'The HVAC unit at Crestwood Heights failed overnight. Your property manager arranged emergency repairs. An invoice arrived today.',type:'pm-ap',amount:120,acct:'Repairs Expense',tag:'Property Management'},
+  {text:'The elevator in Building B is out of service. Maintenance crew completed repairs this morning and submitted an invoice.',type:'pm-ap',amount:95,acct:'Repairs Expense',tag:'Property Management'},
+  {text:'A burst pipe on the third floor required immediate plumbing service. Invoice received, payment due next month.',type:'pm-ap',amount:110,acct:'Repairs Expense',tag:'Property Management'},
+  // Advertising (AP)
+  {text:'Two units are sitting vacant. Your property manager placed listings on three rental platforms. Invoice received, payment due in 30 days.',type:'pm-ap',amount:80,acct:'Advertising Expense',tag:'Property Management'},
+  {text:'Crestwood Heights sponsored the neighborhood business directory this quarter. Invoice on file, payment due next cycle.',type:'pm-ap',amount:75,acct:'Advertising Expense',tag:'Property Management'},
+  {text:'Your property manager ran a social media campaign to promote the newly renovated units. Invoice received, payment due next month.',type:'pm-ap',amount:100,acct:'Advertising Expense',tag:'Property Management'},
+  // Legal Fees (AP)
+  {text:'A tenant dispute required a letter from your property attorney. Invoice received and payment due within 30 days.',type:'pm-ap',amount:150,acct:'Legal Expense',tag:'Property Management'},
+  {text:'Your attorney reviewed and updated the standard lease agreement for all units. Invoice on file, payment due next cycle.',type:'pm-ap',amount:130,acct:'Legal Expense',tag:'Property Management'},
+  {text:'A former tenant filed a small claims complaint. Legal counsel responded on your behalf. Invoice received, payment due next month.',type:'pm-ap',amount:140,acct:'Legal Expense',tag:'Property Management'},
+  // Unearned Revenue (Cash / Deferred Revenue)
+  {text:'A new tenant signed a six-month lease and paid the first two months upfront before move-in.',type:'pm-deferred',amount:200,tag:'Property Management'},
+  {text:'A corporate client reserved the entire fourth floor for the next quarter and wired payment in advance.',type:'pm-deferred',amount:180,tag:'Property Management'},
+  {text:'A tenant paid a security deposit plus last month\'s rent before taking occupancy.',type:'pm-deferred',amount:160,tag:'Property Management'},
+];
+let propMgmtDeck=[];
+
 // CHART OF ACCOUNTS
 const ACCOUNTS=[
   {group:'Assets',     name:'Cash'},
@@ -736,6 +810,8 @@ const ACCOUNTS=[
   {group:'Expenses',   name:'Interest Expense'},
   {group:'Expenses',   name:'Luxury Tax Expense'},
   {group:'Expenses',   name:'Rent Expense'},
+  {group:'Expenses',   name:'Advertising Expense'},
+  {group:'Expenses',   name:'Legal Expense'},
   {group:'Expenses',   name:'Repairs Expense'},
   {group:'Expenses',   name:'Supplies Expense'},
   {group:'Expenses',   name:'Tax Expense'},
@@ -743,7 +819,7 @@ const ACCOUNTS=[
   {group:'Closing',    name:'Income Summary'},
 ];
 const COA_ORDER=ACCOUNTS.map(a=>a.name);
-const DEBIT_NORMAL=new Set(['Cash','Accounts Receivable','Supplies','Prepaid Insurance','Property Asset','Dividends','Depreciation Expense','Insurance Expense','Interest Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense']);
+const DEBIT_NORMAL=new Set(['Cash','Accounts Receivable','Supplies','Prepaid Insurance','Property Asset','Dividends','Advertising Expense','Depreciation Expense','Insurance Expense','Interest Expense','Legal Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense']);
 
 function acctSelectHTML(id,lbl,val='',excludeClosing=false){
   const grps={};
@@ -760,8 +836,18 @@ function sortByCOA(accts){return [...accts].sort((a,b)=>COA_ORDER.indexOf(a)-COA
 
 // STATE
 let closingMethod='re';
-let accountingStandard='gaap'; // 'gaap' or 'ifrs'
+let accountingStandard='gaap';
+let gameLevel=1; // 1=1 round forced, 2=2 rounds optional, 3=2 rounds forced
+function setLevel(n){
+  gameLevel=n;
+  [1,2,3].forEach(i=>{
+    const btn=document.getElementById('level-btn-'+i);
+    if(btn){btn.classList.toggle('selected',i===n);btn.setAttribute('aria-pressed',i===n?'true':'false');}
+  });
+}
+
 let playerName='', playerCash=1500, playerPos=0, playerRoundCount=0;
+let maxRounds=2;
 let cpuPos=0, cpuCash=1500, cpuRoundCount=0;
 let ownership={}; // spaceId -> 'player'|'cpu'
 let gameTransactions=[];
@@ -810,12 +896,15 @@ function startGame(){
   const p1=document.getElementById('p1-name').value.trim();
   if(!p1){document.getElementById('p1-name').classList.add('error');document.getElementById('p1-name').focus();return;}
   playerName=p1;
-  riskDeck=shuffle(RISK_CARDS); ledgerDeck=shuffle(LEDGER_CARDS);
+  maxRounds=(gameLevel===1)?1:2;
+  riskDeck=shuffle(RISK_CARDS); ledgerDeck=shuffle(LEDGER_CARDS); propMgmtDeck=shuffle(PROP_MGMT_CARDS);
   gameTransactions.push({desc:`${playerName} opens books with $1,500 cash investment.`,
     entries:[{account:'Cash',debit:1500,credit:0},{account:'Common Stock',debit:0,credit:1500}],correct:true,pts:0,auto:true});
   document.getElementById('setup-screen').hidden=true;
   document.getElementById('game-screen').classList.add('active');
   buildBoard(); renderScoreboard();
+  const roundLabel=maxRounds===1?'Round 1 of 1':'Round 1 of 2';
+  document.getElementById('round-badge').textContent=roundLabel;
   updateStatus(`${playerName}'s turn. Roll the dice!`);
 }
 
@@ -875,7 +964,7 @@ function renderScoreboard(){
     </div>`;
 }
 
-function updateRoundBadge(){document.getElementById('round-badge').textContent=`Round ${Math.min(playerRoundCount+1,2)} of 2`;}
+function updateRoundBadge(){document.getElementById('round-badge').textContent=`Round ${Math.min(playerRoundCount+1,maxRounds)} of ${maxRounds}`;}
 
 // DICE
 const DIE_FACES=['⚀','⚁','⚂','⚃','⚄','⚅'];
@@ -915,7 +1004,7 @@ function landOnSpace(pos){
   updateStatus(`${playerName} landed on ${sp.name}.`);
   switch(sp.type){
     case 'property': handleProperty(sp); break;
-    case 'railroad': handleRailroad(sp); break;
+    case 'propmgmt': handlePropMgmt(); break;
     case 'utility':  handleUtility(sp);  break;
     case 'tax':
       showJE({type:'tax',desc:`<strong>Income Tax:</strong> ${playerName} must pay $100.`,
@@ -953,20 +1042,37 @@ function handleProperty(sp){
   }
 }
 
-function handleRailroad(sp){
-  const owner=ownership[sp.id];
-  if(owner===undefined){
-    if(playerCash>=sp.price){
-      document.getElementById('decision-title').innerHTML=`<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#222;vertical-align:middle;margin-right:8px;"></span>Buy ${sp.name}?`;
-      document.getElementById('decision-desc').innerHTML=`<strong>${sp.name}</strong> available for <strong>$${sp.price}</strong>. Generates Service Revenue when City Properties Inc. lands here.`;
-      document.getElementById('decision-overlay').classList.add('active');
-    } else {updateStatus(`Can't afford ${sp.name}.`);setTimeout(endTurn,1500);}
-  } else if(owner==='player'){
-    updateStatus(`You own ${sp.name}. No transaction.`);setTimeout(endTurn,1200);
-  } else {
-    showJE({type:'rr',desc:`<strong>Station fee:</strong> ${playerName} pays $${sp.rent} to City Properties Inc. for ${sp.name}.`,
-      correctEntries:[{account:'Rent Expense',debit:sp.rent,credit:0},{account:'Cash',debit:0,credit:sp.rent}],
-      onComplete:()=>{playerCash-=sp.rent;cpuCash+=sp.rent;renderScoreboard();addToLog(`Station fee: -$${sp.rent}`);endTurn();}});
+function handlePropMgmt(){
+  drawPropMgmtCard();
+}
+
+function drawPropMgmtCard(){
+  if(!propMgmtDeck.length) propMgmtDeck=fisherYates(PROP_MGMT_CARDS.slice());
+  const card=propMgmtDeck.pop();
+  const d=document.getElementById('card-display'); d.className='card-drawn';
+  document.getElementById('card-tag').textContent=card.tag;
+  document.getElementById('card-text').textContent=card.text;
+  document.getElementById('card-amount').textContent=card.type==='pm-deferred'?`Receive $${card.amount}.`:`$${card.amount} due.`;
+  document.getElementById('card-confirm').onclick=()=>processPropMgmtCard(card);
+  d.style.display='block';
+}
+
+function processPropMgmtCard(card){
+  document.getElementById('card-display').style.display='none';
+  if(card.type==='pm-ap'){
+    showJE({
+      type:'pm-ap',
+      desc:`<strong>${card.acct}:</strong> ${card.text} Record the invoice for $${card.amount}.`,
+      correctEntries:[{account:card.acct,debit:card.amount,credit:0},{account:'Accounts Payable',debit:0,credit:card.amount}],
+      onComplete:()=>{addToLog(`${card.acct}: $${card.amount} (on account)`);endTurn();}
+    });
+  } else if(card.type==='pm-deferred'){
+    showJE({
+      type:'pm-deferred',
+      desc:`<strong>Cash received in advance:</strong> ${card.text} Record receipt of $${card.amount}.`,
+      correctEntries:[{account:'Cash',debit:card.amount,credit:0},{account:'Deferred Revenue',debit:0,credit:card.amount}],
+      onComplete:()=>{playerCash+=card.amount;renderScoreboard();addToLog(`Advance receipt: +$${card.amount}`);endTurn();}
+    });
   }
 }
 
@@ -1115,7 +1221,7 @@ function continueAfterJE(){document.getElementById('je-overlay').classList.remov
 
 // TURN MANAGEMENT
 function endTurn(){
-  if(playerRoundCount>=2&&cpuRoundCount>=2){startCycle();return;}
+  if(playerRoundCount>=maxRounds&&cpuRoundCount>=maxRounds){startCycle();return;}
   runCPUTurn();
 }
 
@@ -1162,7 +1268,7 @@ async function runCPUTurn(){
 
 async function processCPUSpace(sp){
   const owner=ownership[sp.id];
-  if(sp.type==='property'||sp.type==='railroad'||sp.type==='utility'){
+  if(sp.type==='property'||sp.type==='utility'){
     if(owner===undefined){
       if(cpuCash>=sp.price){
         ownership[sp.id]='cpu'; cpuCash-=sp.price;
@@ -1192,7 +1298,7 @@ async function processCPUSpace(sp){
 }
 
 function afterCPUTurn(){
-  if(playerRoundCount>=2&&cpuRoundCount>=2){startCycle();return;}
+  if(playerRoundCount>=maxRounds&&cpuRoundCount>=maxRounds){startCycle();return;}
   document.getElementById('roll-btn').disabled=false;
   updateStatus(`${playerName}'s turn. Roll the dice!`);
   renderScoreboard();
@@ -1251,7 +1357,27 @@ function updatePips(active){
     if(i<7){const l=document.getElementById(`pip-line-${i}`);if(l)l.className='pip-line'+(i<active?' lit':'');}
   }
 }
-function goBackTo(n){currentCyclePhase=n;renderPhase(n);}
+let tbRefModalTargetPhase=null;
+function goBackTo(n){
+  if(currentCyclePhase===3||currentCyclePhase===5){
+    tbRefModalTargetPhase=n;
+    document.getElementById('tb-ref-modal').classList.remove('hidden');
+    document.getElementById('tb-ref-stay-btn').focus();
+  } else {
+    currentCyclePhase=n;renderPhase(n);
+  }
+}
+function tbRefModalStay(){
+  document.getElementById('tb-ref-modal').classList.add('hidden');
+  tbRefModalTargetPhase=null;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function tbRefModalGoBack(){
+  document.getElementById('tb-ref-modal').classList.add('hidden');
+  const n=tbRefModalTargetPhase;
+  tbRefModalTargetPhase=null;
+  currentCyclePhase=n;renderPhase(n);
+}
 // Saved input data per phase for pip navigation
 const savedPhaseInputs={};
 
@@ -1452,7 +1578,7 @@ function p6(){
   })();
 
   const REVS=['Rental Revenue','Service Revenue'];
-  const EXPS=['Depreciation Expense','Insurance Expense','Interest Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
+  const EXPS=['Advertising Expense','Depreciation Expense','Insurance Expense','Interest Expense','Legal Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
   const ASSETS=['Cash','Accounts Receivable','Supplies','Prepaid Insurance','Property Asset','Accumulated Depreciation'];
   const LIABS=['Accounts Payable','Notes Payable','Interest Payable','Deferred Revenue'];
 
@@ -1622,7 +1748,7 @@ function p6(){
 function computeIS(){
   const ledger=window._p6Ledger;
   const REVS=['Rental Revenue','Service Revenue'];
-  const EXPS=['Depreciation Expense','Insurance Expense','Interest Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
+  const EXPS=['Advertising Expense','Depreciation Expense','Insurance Expense','Interest Expense','Legal Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
   // Read what student entered for revenues and expenses
   let totalRev=0, totalExp=0;
   const isRowCount=window._p6isAccounts.length+1;
@@ -1695,7 +1821,7 @@ function computeBS(){
 function checkAllStatements(){
   const ledger=window._p6Ledger;
   const REVS=['Rental Revenue','Service Revenue'];
-  const EXPS=['Depreciation Expense','Insurance Expense','Interest Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
+  const EXPS=['Advertising Expense','Depreciation Expense','Insurance Expense','Interest Expense','Legal Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
   const ASSETS=['Cash','Accounts Receivable','Supplies','Prepaid Insurance','Property Asset','Accumulated Depreciation'];
   const LIABS=['Accounts Payable','Notes Payable','Interest Payable','Deferred Revenue'];
   const isAccounts=window._p6isAccounts; // accounts that actually have balances
@@ -1806,7 +1932,7 @@ function checkAllStatements(){
 function p7(){
   const ledger=buildLedger();
   savedAdjEntries.forEach(adj=>{if(!ledger[adj.debit])ledger[adj.debit]={debit:0,credit:0};ledger[adj.debit].debit+=adj.amount;if(!ledger[adj.credit])ledger[adj.credit]={debit:0,credit:0};ledger[adj.credit].credit+=adj.amount;});
-  const REVS=['Rental Revenue','Service Revenue'],EXPS=['Depreciation Expense','Insurance Expense','Interest Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
+  const REVS=['Rental Revenue','Service Revenue'],EXPS=['Advertising Expense','Depreciation Expense','Insurance Expense','Interest Expense','Legal Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
   const totalRev=REVS.reduce((s,a)=>s+Math.abs(getBal(a,ledger)),0);
   const totalExp=EXPS.reduce((s,a)=>s+Math.abs(getBal(a,ledger)),0);
   const netIncome=totalRev-totalExp, dividends=Math.abs(getBal('Dividends',ledger));
@@ -1974,7 +2100,7 @@ function advanceTo(phase){currentCyclePhase=phase;renderPhase(phase);}
 // REFLECTION GATE
 function goToReflection(){
   cycleScores.completion=10;cycleScores.je=Math.min(Math.round(cycleScores.je),20);
-  finalScore=Math.min(Object.values(cycleScores).reduce((s,v)=>s+v,0),100);
+  finalScore=Math.min(Object.values(cycleScores).reduce((s,v)=>s+v,0),90);
   document.getElementById('cycle-screen').classList.remove('active');
   document.getElementById('reflection-gate-screen').classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1993,7 +2119,7 @@ function showResults(){
   document.getElementById('reflection-gate-screen').classList.remove('active');
   document.getElementById('complete-screen').classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
-  document.getElementById('final-score-display').textContent=`${finalScore}/100`;
+  document.getElementById('final-score-display').textContent=`${finalScore}/90`;
   document.getElementById('score-breakdown').innerHTML=[
     ['Journal Entries (gameplay)',cycleScores.je,20],['Post to Ledger',cycleScores.ledger,10],
     ['Unadjusted Trial Balance',cycleScores.utb,10],['Adjusting Entries',cycleScores.adj,10],
@@ -2007,7 +2133,7 @@ function showResults(){
     SCORM.save(finalScore);
     const sm=document.getElementById('scorm-msg');
     sm.style.display='block';
-    sm.textContent=`Score saved: ${finalScore}/100. Download your reflection card before leaving this page.`;
+    sm.textContent=`Score saved: ${finalScore}/90. Download your reflection card before leaving this page.`;
     const exitBtn=document.getElementById('exit-scorm-btn');
     if(exitBtn) exitBtn.style.display='inline-block';
     const exitNote=document.getElementById('exit-note');
@@ -2031,7 +2157,7 @@ function buildReflectionCard(){
   ctx.fillStyle='white'; ctx.font='bold 17px Arial'; ctx.textAlign='left';
   ctx.fillText(`Student: ${playerName}`,48,108);
   ctx.fillStyle='#FF9F1C'; ctx.font='bold 20px Arial'; ctx.textAlign='right';
-  ctx.fillText(`Score: ${finalScore}/100`,W-48,108);
+  ctx.fillText(`Score: ${finalScore}/90`,W-48,108);
   ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='11px Arial'; ctx.textAlign='left';
   ctx.fillText(`Date: ${new Date().toLocaleDateString()}`,48,126);
   ctx.fillStyle='rgba(255,159,28,0.3)'; ctx.fillRect(40,138,W-80,1);
@@ -2072,8 +2198,13 @@ function exitSCORM(){
 }
 
 // Fallback: call LMSFinish if student closes or navigates away without clicking exit
-window.addEventListener('beforeunload',function(){
+// Also warn the student if they try to leave mid-game before downloading their reflection card
+window.addEventListener('beforeunload',function(e){
   SCORM.finish();
+  if(playerRoundCount>0&&!gameOver){
+    e.preventDefault();
+    e.returnValue='You have unsaved game progress. If you leave now, your progress will be lost.';
+  }
 });
 </script>
 </body>
