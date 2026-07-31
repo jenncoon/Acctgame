@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="author" content="Jennifer Coon, CFE, CIA">
+<meta name="copyright" content="© 2026 Jennifer Coon. All rights reserved. Free for educational use. Not for resale.">
+<meta name="description" content="Boardwalk Books LLC: Crestwood Heights - Accounting Cycle Educational Game">
+<meta name="contact" content="jcoonconsulting@gmail.com">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boardwalk Books: Crestwood Heights</title>
+<!--
+=============================================================================
+  Boardwalk Books LLC: Crestwood Heights
+  Accounting Cycle Educational Game
+  Version: NoJE (increase/decrease account entry, no debit/credit terminology;
+  5-phase flow emphasizing data flow to the financial statements)
+=============================================================================
+  © 2026 Jennifer Coon. All rights reserved.
+  Free for educational use. Not for resale.
+
+  Original work created by Jennifer Coon, CFE, CIA
+  Tyler Junior College | Collin College
+  Contact: jcoonconsulting@gmail.com
+
+  Copyright protection applies automatically under U.S. copyright law
+  (17 U.S.C. § 102) from the moment of creation. Registration is not
+  required for protection to apply.
+
+  Permitted: Use in educational settings, sharing with colleagues for
+  non-commercial instructional purposes, adaptation with attribution.
+
+  Not permitted: Sale, resale, commercial licensing, removal of this
+  notice, or distribution without attribution to the original author.
+
+  Game design, pedagogical framework, narrative elements, scoring
+  architecture, and question content are original intellectual property
+  of Jennifer Coon. The accounting cycle educational format, fictional
+  company scenario (Boardwalk Books LLC / Crestwood Heights), badge
+  system, and SCORM integration design are protected original works.
+
+  If you are using this file and are not Jennifer Coon or an authorized
+  colleague, please reach out before modifying or redistributing.
+=============================================================================
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto+Slab:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+:root {
+  --violet:   #262D68;
+  --violet-lt:#3a4490;
+  --orange:   #FF9F1C;
+  --orange-lt:#ffb84d;
+  --green:    #0A713A;
+  --green-lt: #0e9a50;
+  --blue:     #1a5fa8;
+  --blue-lt:  #2273c9;
+  --yellow:   #D7DF23;
+  --red:      #E51F36;
+  --white:    #ffffff;
+  --offwhite: #f8f6f0;
+  --ink:      #1a1a2e;
+  --mid:      #d0cfc8;
+  --focus:    #FFD700;
+  --prop-purple:#9b3ec0; --prop-lblue:#5aaedc; --prop-pink:#e84393;
+  --prop-orange:#FF9F1C; --prop-red:#E51F36;   --prop-yellow:#b8b800;
+  --prop-pgreen:#0A713A; --prop-dblue:#1a5fa8; --prop-rr:#222; --prop-util:#777;
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:linear-gradient(135deg,#0d1033 0%,#1a2060 50%,#0d1033 100%); min-height:100vh; font-family:Arial,sans-serif; color:var(--ink); overflow-x:hidden; }
+
+.skip-link { position:absolute; top:-100px; left:0; background:var(--focus); color:var(--ink); font-weight:700; padding:10px 16px; z-index:9999; text-decoration:none; font-size:1rem; }
+.skip-link:focus { top:0; }
+:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+
+/* ── SETUP ── */
+.setup-screen { position:fixed; inset:0; z-index:600; background:linear-gradient(135deg,#0d1033 0%,#1a2060 50%,#0d1033 100%); display:flex; align-items:flex-start; justify-content:center; padding:40px 20px 20px; overflow-y:auto; }
+.setup-screen[hidden] { display:none; }
+.setup-box { background:var(--white); border-radius:16px; max-width:540px; width:100%; overflow:visible; box-shadow:0 20px 60px rgba(0,0,0,.6); }
+.setup-header { background:var(--violet); padding:24px 32px; text-align:center; border-bottom:5px solid var(--orange); }
+.setup-logo { font-family:'Bungee',cursive; font-size:clamp(1.1rem,3.5vw,1.7rem); color:var(--orange); display:block; letter-spacing:1px; margin-bottom:4px; }
+.setup-sub { font-size:.875rem; color:rgba(255,255,255,.7); letter-spacing:2px; text-transform:uppercase; }
+.setup-body { padding:24px 32px; }
+.setup-section-label { font-size:.875rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--violet); display:block; margin-bottom:8px; margin-top:16px; }
+.mode-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
+.mode-btn { padding:14px 10px; border-radius:10px; border:2px solid var(--mid); background:var(--offwhite); color:var(--ink); font-family:Arial,sans-serif; font-size:1rem; font-weight:700; cursor:pointer; transition:border-color .2s,background .2s; text-align:center; }
+.mode-btn .mode-icon { font-size:1.6rem; display:block; margin-bottom:5px; }
+.mode-btn .mode-sub { font-size:.875rem; color:#666; display:block; margin-top:2px; font-weight:400; }
+.mode-btn:hover, .mode-btn[aria-pressed="true"] { border-color:var(--violet); background:#dde0f0; }
+.name-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.player-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+.p1-dot { background:var(--violet); } .p2-dot { background:var(--orange); }
+.name-input { flex:1; border:2px solid var(--mid); border-radius:8px; padding:10px 14px; font-family:Arial,sans-serif; font-size:1rem; color:var(--ink); background:var(--offwhite); outline:none; }
+.name-input:focus { border-color:var(--violet); }
+.name-input.error { border-color:var(--red); }
+.setup-rules { background:#f0f2ff; border-left:4px solid var(--violet); border-radius:0 8px 8px 0; padding:12px 16px; margin-bottom:14px; font-size:.875rem; line-height:1.7; color:#333; }
+.setup-rules strong { color:var(--violet); }
+
+/* Closing method question */
+.closing-question { background:#fff3e0; border:2px solid var(--orange); border-radius:10px; padding:14px 16px; margin-top:14px; }
+.closing-question p { font-size:1rem; font-weight:700; color:#5d3200; margin-bottom:10px; line-height:1.5; }
+.closing-opts { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.closing-opt { padding:10px 12px; border-radius:8px; border:2px solid var(--mid); background:white; font-family:Arial,sans-serif; font-size:.875rem; font-weight:700; cursor:pointer; transition:border-color .2s,background .2s; text-align:center; color:var(--ink); }
+.closing-opt:hover, .closing-opt[aria-pressed="true"] { border-color:var(--orange); background:#fff3e0; }
+.closing-opt .co-icon { font-size:1.3rem; display:block; margin-bottom:4px; }
+.closing-opt .co-sub { font-size:.875rem; color:#666; display:block; margin-top:2px; font-weight:400; }
+
+.start-btn { width:100%; padding:14px; background:var(--violet); border:none; border-radius:10px; font-family:'Bungee',cursive; font-size:1rem; letter-spacing:1px; color:white; cursor:pointer; margin-top:18px; transition:background .2s,transform .15s; box-shadow:0 4px 16px rgba(38,45,104,.4); }
+.start-btn:hover { background:var(--violet-lt); transform:translateY(-2px); }
+
+/* ── GAME SCREEN ── */
+#game-screen { display:none; }
+#game-screen.active { display:block; }
+.game-header { background:var(--violet); border-bottom:4px solid var(--orange); padding:10px 20px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+.game-title { font-family:'Bungee',cursive; font-size:clamp(.85rem,2.2vw,1.3rem); color:var(--orange); letter-spacing:1px; }
+.game-title span { color:rgba(255,255,255,.6); font-size:.875rem; display:block; font-family:Arial,sans-serif; letter-spacing:2px; text-transform:uppercase; }
+.scoreboard { display:flex; gap:10px; flex-wrap:wrap; }
+.score-card { background:rgba(255,255,255,.1); border:2px solid rgba(255,255,255,.2); border-radius:10px; padding:7px 14px; min-width:130px; transition:border-color .3s,transform .3s; }
+.score-card.active-player { border-color:var(--orange); transform:translateY(-2px); background:rgba(255,159,28,.15); }
+.sc-name { font-size:.875rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:rgba(255,255,255,.7); display:block; }
+.sc-cash { font-family:'Bungee',cursive; font-size:1rem; color:var(--orange); display:block; }
+.sc-turn { font-size:.875rem; color:rgba(255,255,255,.75); display:block; }
+.round-badge { background:var(--orange); color:var(--violet); font-family:'Bungee',cursive; font-size:.875rem; padding:6px 12px; border-radius:20px; white-space:nowrap; }
+
+/* ── BOARD ── */
+.board-wrapper { display:flex; justify-content:center; align-items:flex-start; padding:16px; gap:16px; flex-wrap:wrap; }
+.monopoly-board { display:grid; grid-template-columns:78px repeat(9,58px) 78px; grid-template-rows:78px repeat(9,58px) 78px; border:3px solid #333; background:#c8e6c9; box-shadow:0 8px 32px rgba(0,0,0,.5); flex-shrink:0; }
+.space { border:1px solid #333; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; background:#c8e6c9; font-size:.875rem; text-align:center; padding:2px; line-height:1.2; font-family:Arial,sans-serif; font-weight:700; color:#111; }
+.space.corner { font-size:.875rem; }
+.color-dot-legacy { position:absolute; }
+.color-dot { position:absolute; top:3px; left:3px; width:11px; height:11px; border-radius:50%; border:1px solid rgba(0,0,0,.2); }
+.strip-purple{background:var(--prop-purple)} .strip-lblue{background:var(--prop-lblue)} .strip-pink{background:var(--prop-pink)}
+.strip-orange{background:var(--prop-orange)} .strip-red{background:var(--prop-red)} .strip-yellow{background:var(--prop-yellow)}
+.strip-pgreen{background:var(--prop-pgreen)} .strip-dblue{background:var(--prop-dblue)} .strip-rr{background:var(--prop-rr)} .strip-util{background:var(--prop-util)}
+.space-price { font-size:.65rem; color:#333; font-weight:400; display:block; }
+.space-name { font-size:.65rem; line-height:1.2; font-weight:700; padding:0 2px; }
+.space-icon { font-size:.875rem; }
+.owned-p1::after { content:'📒'; position:absolute; bottom:2px; right:2px; font-size:.875rem; }
+.owned-p2::after { content:'🧮'; position:absolute; bottom:2px; right:2px; font-size:.875rem; }
+.token-p1,.token-p2 { position:absolute; font-size:1rem; z-index:10; animation:tokenBounce .4s ease; }
+.token-p1 { bottom:3px; left:3px; } .token-p2 { bottom:3px; right:18px; }
+@keyframes tokenBounce { 0%{transform:scale(.5) translateY(-10px);opacity:0} 60%{transform:scale(1.2) translateY(2px);opacity:1} 100%{transform:scale(1);opacity:1} }
+
+/* CPU token */
+.token-cpu { position:absolute; font-size:.875rem; z-index:9; top:3px; right:3px; animation:tokenBounce .4s ease; }
+
+/* CPU notification */
+/* CPU turn modal dialog */
+.cpu-modal-overlay { position:fixed; inset:0; z-index:600; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; padding:20px; }
+.cpu-modal-overlay.hidden { display:none; }
+.cpu-modal-box { background:var(--violet); border:3px solid var(--orange); border-radius:16px; padding:28px 32px; max-width:420px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,.6); }
+.cpu-modal-title { font-family:'Bungee',cursive; font-size:1.1rem; color:var(--orange); display:block; margin-bottom:12px; }
+.cpu-modal-text { font-size:1rem; color:white; line-height:1.7; margin-bottom:20px; }
+.cpu-modal-close { width:100%; padding:14px 12px; min-height:44px; background:var(--orange); border:none; border-radius:8px; font-family:'Bungee',cursive; font-size:1rem; color:var(--violet); cursor:pointer; letter-spacing:1px; transition:background .2s; }
+.cpu-modal-close:hover { background:var(--orange-lt); }
+.cpu-modal-close:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+.board-center { grid-column:2/11; grid-row:2/11; background:#c8e6c9; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px; gap:6px; }
+.center-title { font-family:'Bungee',cursive; font-size:clamp(.75rem,1.6vw,1.2rem); color:var(--violet); text-align:center; line-height:1.2; }
+.center-sub { font-size:.875rem; color:#555; text-align:center; letter-spacing:1px; text-transform:uppercase; }
+.die { width:44px; height:44px; background:white; border:3px solid var(--violet); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; box-shadow:2px 2px 6px rgba(0,0,0,.2); }
+.die.rolling { animation:dieRoll .5s ease; }
+@keyframes dieRoll { 0%{transform:rotate(0deg) scale(1)} 25%{transform:rotate(-15deg) scale(1.1)} 50%{transform:rotate(15deg) scale(.9)} 75%{transform:rotate(-10deg) scale(1.05)} 100%{transform:rotate(0deg) scale(1)} }
+.dice-area { display:flex; gap:10px; align-items:center; justify-content:center; }
+.roll-btn { padding:12px 20px; min-height:44px; background:var(--violet); border:none; border-radius:8px; font-family:'Bungee',cursive; font-size:1rem; color:white; cursor:pointer; letter-spacing:1px; transition:background .2s,transform .15s; }
+.roll-btn:hover:not(:disabled) { background:var(--violet-lt); transform:translateY(-1px); }
+.roll-btn:disabled { opacity:.4; cursor:default; }
+.status-msg { background:white; border:2px solid var(--violet); border-radius:8px; padding:7px 12px; font-size:.875rem; text-align:center; color:var(--ink); min-height:34px; line-height:1.4; max-width:250px; }
+
+.sidebar { min-width:210px; max-width:250px; display:flex; flex-direction:column; gap:10px; }
+.sidebar-card { background:white; border-radius:10px; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,.2); }
+.sidebar-header { background:var(--violet); color:white; font-family:'Bungee',cursive; font-size:.875rem; letter-spacing:1px; padding:7px 12px; }
+.sidebar-body { padding:10px 12px; font-size:.875rem; line-height:1.6; }
+.property-item { display:flex; align-items:center; gap:7px; padding:3px 0; border-bottom:1px solid var(--mid); font-size:.875rem; }
+.property-item:last-child { border-bottom:none; }
+.prop-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.log-entry { font-size:.875rem; padding:3px 0; border-bottom:1px solid #eee; color:#444; line-height:1.4; }
+.log-entry:last-child { border-bottom:none; }
+.log-amt { font-weight:700; color:var(--violet); }
+
+/* ── MODALS ── */
+.overlay { display:none; position:fixed; inset:0; background:rgba(10,10,40,.88); z-index:300; justify-content:center; align-items:center; padding:16px; backdrop-filter:blur(4px); }
+.overlay.active { display:flex; }
+.modal-box { background:white; border-radius:16px; max-width:560px; width:100%; max-height:92vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.8); animation:modalPop .3s cubic-bezier(.34,1.56,.64,1); }
+@keyframes modalPop { from{transform:scale(.85) translateY(16px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+.modal-header { background:var(--violet); color:white; padding:16px 22px; border-radius:16px 16px 0 0; border-bottom:4px solid var(--orange); }
+.modal-tag { font-size:.875rem; letter-spacing:3px; text-transform:uppercase; color:var(--orange); display:block; margin-bottom:3px; }
+.modal-title { font-family:'Bungee',cursive; font-size:1rem; color:white; }
+.modal-body { padding:18px 22px; }
+.transaction-desc { background:#f0f2ff; border-left:4px solid var(--violet); border-radius:0 8px 8px 0; padding:11px 15px; margin-bottom:16px; font-size:1rem; line-height:1.6; color:#333; }
+.transaction-desc strong { color:var(--violet); }
+.je-label { font-size:.875rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--violet); display:block; margin-bottom:7px; }
+.je-table { width:100%; border-collapse:collapse; margin-bottom:12px; font-size:.875rem; }
+.je-table th { background:var(--violet); color:white; font-size:.875rem; letter-spacing:1px; text-transform:uppercase; padding:7px 10px; text-align:left; }
+.je-table th:not(:first-child) { text-align:center; }
+.je-table td { border:1px solid var(--mid); padding:6px 8px; background:var(--offwhite); vertical-align:middle; }
+.je-table tr:nth-child(even) td { background:#f0f1f8; }
+.je-table select { width:100%; border:1px solid var(--mid); border-radius:4px; padding:5px 6px; font-family:Arial,sans-serif; font-size:.875rem; color:var(--ink); background:white; outline:none; }
+.je-table select:focus { border-color:var(--violet); }
+.je-table select.error,.je-table input.error { border-color:var(--red); }
+.je-table input[type="number"] { width:88px; border:1px solid var(--mid); border-radius:4px; padding:5px 6px; font-family:Arial,sans-serif; font-size:.875rem; color:var(--ink); background:white; text-align:right; outline:none; }
+.je-table input[type="number"]:focus { border-color:var(--violet); }
+.je-indent { padding-left:18px !important; }
+.je-feedback { border-radius:8px; padding:10px 14px; margin-bottom:12px; font-size:.875rem; line-height:1.6; display:none; }
+.je-feedback.show { display:block; }
+.je-feedback.correct { background:#e8f5e9; border-left:4px solid var(--green); color:#1b5e20; }
+.je-feedback.wrong   { background:#fce4ec; border-left:4px solid var(--red); color:#7f0000; }
+.je-feedback.hint    { background:#fff3e0; border-left:4px solid var(--orange); color:#6d3b00; }
+.attempt-note { font-size:.875rem; color:#666; text-align:center; margin-bottom:9px; }
+.modal-btn { width:100%; padding:13px; min-height:44px; border:none; border-radius:8px; font-family:'Bungee',cursive; font-size:1rem; letter-spacing:1px; cursor:pointer; transition:background .2s,transform .15s; margin-top:4px; }
+.modal-btn.primary { background:var(--violet); color:white; }
+.modal-btn.primary:hover { background:var(--violet-lt); }
+.modal-btn.success { background:var(--green); color:white; }
+.modal-btn.reveal { background:var(--orange); color:white; }
+.modal-btn.secondary { background:#eee; color:#333; }
+.modal-btn.secondary:hover { background:#ddd; }
+.decision-btns { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.card-drawn { background:linear-gradient(135deg,#fff9e6,#fff3cc); border:2px solid var(--orange); border-radius:12px; padding:18px; text-align:center; margin-bottom:14px; }
+.card-drawn.cc { background:linear-gradient(135deg,#e8f5e9,#d0f0d8); border-color:var(--green); }
+.card-icon { font-size:2.2rem; display:block; margin-bottom:7px; }
+.card-type { font-size:.875rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#888; display:block; margin-bottom:5px; }
+.card-text { font-size:1rem; font-weight:700; color:var(--ink); line-height:1.5; }
+
+/* ── CYCLE SCREEN ── */
+#cycle-screen { display:none; }
+#cycle-screen.active { display:block; min-height:100vh; }
+.cycle-header { background:var(--violet); border-bottom:4px solid var(--orange); padding:12px 24px; }
+.cycle-header h1 { font-family:'Bungee',cursive; font-size:clamp(.95rem,2.2vw,1.3rem); color:var(--orange); letter-spacing:1px; }
+.cycle-header p { font-size:.875rem; color:rgba(255,255,255,.6); margin-top:2px; }
+.phase-pips { display:flex; gap:0; align-items:center; padding:9px 24px; background:rgba(0,0,0,.3); overflow-x:auto; }
+.pip { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Bungee',cursive; font-size:.875rem; border:2px solid; transition:all .3s; flex-shrink:0; }
+.pip.locked   { background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.75); color:rgba(255,255,255,.80); }
+.pip.active   { background:var(--orange); border-color:var(--orange); color:var(--violet); box-shadow:0 0 10px rgba(255,159,28,.5); }
+.pip.complete { background:var(--green); border-color:var(--green); color:white; cursor:pointer; }
+.pip.complete:hover { background:var(--green-lt); }
+.pip-line { width:18px; height:2px; background:rgba(255,255,255,.15); flex-shrink:0; }
+.pip-line.lit { background:var(--green); }
+.cycle-main { max-width:900px; margin:0 auto; padding:22px 20px 60px; }
+.phase-card { background:white; border-radius:12px; overflow:hidden; box-shadow:0 6px 24px rgba(0,0,0,.15); margin-bottom:20px; }
+.phase-card-header { background:var(--violet); padding:14px 22px; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--orange); }
+.phase-card-header h2 { font-family:'Bungee',cursive; font-size:clamp(.88rem,1.8vw,1.1rem); color:white; }
+.phase-num-badge { background:var(--orange); color:var(--violet); font-family:'Bungee',cursive; font-size:1rem; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.phase-card-body { padding:20px 22px; }
+.phase-note { background:#f0f2ff; border-left:4px solid var(--violet); border-radius:0 8px 8px 0; padding:11px 15px; margin-bottom:16px; font-size:.875rem; line-height:1.7; color:#333; }
+.phase-note strong { color:var(--violet); }
+
+/* Tables */
+.ledger-table { width:100%; border-collapse:collapse; margin-bottom:14px; font-size:.875rem; }
+.ledger-table th { background:var(--violet); color:white; padding:7px 10px; text-align:left; font-size:.875rem; letter-spacing:1px; text-transform:uppercase; }
+.ledger-table th:not(:first-child) { text-align:right; }
+.ledger-table td { border:1px solid var(--mid); padding:5px 10px; background:var(--offwhite); color:var(--ink); }
+.ledger-table tr:nth-child(even) td { background:#f0f1f8; }
+.ledger-table td:not(:first-child) { text-align:right; font-family:'Roboto Slab',serif; }
+.ledger-table .total-row td { background:var(--violet) !important; color:white !important; font-weight:700; }
+
+/* T-accounts */
+.t-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-bottom:14px; }
+.t-account { border:2px solid var(--mid); border-radius:8px; overflow:hidden; background:var(--offwhite); }
+.t-account-name { background:var(--violet); color:white; font-size:.875rem; font-weight:700; padding:5px 8px; text-align:center; text-transform:uppercase; }
+.t-account-body { display:grid; grid-template-columns:1fr 1fr; }
+.t-col { padding:6px 8px; min-height:52px; }
+.t-col:first-child { border-right:2px solid var(--mid); }
+.t-col-label { font-size:.875rem; color:#666; text-align:center; display:block; margin-bottom:3px; text-transform:uppercase; }
+.t-col-val { font-family:'Roboto Slab',serif; font-size:.875rem; color:var(--ink); text-align:center; display:block; margin-bottom:2px; }
+.t-balance-row { grid-column:1/-1; border-top:2px solid var(--mid); padding:6px 10px; background:#eef0f8; display:flex; flex-direction:column; gap:5px; }
+.t-balance-label { font-size:.875rem; color:#333; text-transform:uppercase; font-weight:700; }
+.t-balance-inputs { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.t-balance-input { width:76px; border:1px solid var(--violet); border-radius:4px; padding:3px 6px; font-family:'Roboto Slab',serif; font-size:.875rem; color:var(--violet); text-align:right; outline:none; background:white; }
+.t-balance-input:focus { border-color:var(--orange); }
+.dc-select { border:1px solid var(--violet); border-radius:4px; padding:3px 4px; font-family:Arial,sans-serif; font-size:.875rem; outline:none; background:white; color:var(--ink); }
+.dc-select:focus { border-color:var(--orange); }
+
+/* Trial balance */
+.tb-table { width:100%; border-collapse:collapse; margin-bottom:14px; font-size:.875rem; }
+.tb-table th { background:var(--violet); color:white; padding:7px 12px; font-size:.875rem; letter-spacing:1px; text-transform:uppercase; }
+.tb-table th:not(:first-child) { text-align:center; }
+.tb-table td { border:1px solid var(--mid); padding:6px 10px; background:var(--offwhite); color:var(--ink); }
+.tb-table tr:nth-child(even) td { background:#f0f1f8; }
+.tb-table .total-row td { background:var(--violet) !important; color:white !important; font-weight:700; text-align:center; }
+.tb-input { width:98px; border:1px solid var(--mid); border-radius:4px; padding:4px 6px; font-family:'Roboto Slab',serif; font-size:.875rem; text-align:right; outline:none; background:white; color:var(--ink); }
+.tb-input:focus { border-color:var(--violet); }
+/* Remove browser spinner arrows from all number inputs */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+input[type=number] { -moz-appearance:textfield; appearance:textfield; }
+.tb-total-input { width:105px; border:1px solid rgba(255,255,255,.5); border-radius:4px; padding:4px 6px; font-family:'Roboto Slab',serif; font-size:.875rem; text-align:right; outline:none; background:rgba(255,255,255,.15); color:white; }
+.tb-total-input:focus { border-color:white; }
+
+/* Financial statement drag and drop */
+.fs-build-area { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:16px; }
+.fs-pool { background:#f0f2ff; border:2px solid var(--violet); border-radius:10px; padding:12px; }
+.fs-pool-title { font-family:'Bungee',cursive; font-size:.875rem; color:var(--violet); margin-bottom:10px; text-align:center; }
+/* Financial Statement dropdown table layout */
+.fs-stmt-block { background:white; border-radius:10px; border:2px solid var(--violet); margin-bottom:18px; overflow:hidden; }
+.fs-stmt-title { background:var(--violet); color:white; font-family:'Bungee',cursive; font-size:1rem; padding:10px 16px; letter-spacing:1px; }
+.fs-stmt-table { width:100%; border-collapse:collapse; }
+.fs-stmt-table th { background:#f0f2ff; color:var(--violet); font-size:.875rem; font-weight:700; padding:8px 12px; text-align:left; border-bottom:2px solid var(--violet); }
+.fs-stmt-table td { padding:6px 10px; border-bottom:1px solid #e0e0e0; vertical-align:middle; }
+.fs-stmt-table tr:last-child td { border-bottom:none; }
+.fs-total-row td { font-size:.875rem; padding:8px 10px; border-top:2px solid var(--violet); background:#f0f2ff; font-weight:700; }
+.fs-dd { width:100%; border:1px solid var(--mid); border-radius:4px; padding:5px 6px; font-family:Arial,sans-serif; font-size:.875rem; color:var(--ink); background:white; outline:none; min-height:36px; }
+.fs-dd:focus { border-color:var(--violet); outline:2px solid var(--focus); outline-offset:2px; }
+.fs-stmt-amt { width:110px; border:1px solid var(--mid); border-radius:4px; padding:5px 8px; font-family:'Roboto Slab',serif; font-size:.875rem; text-align:right; outline:none; background:white; color:var(--ink); min-height:36px; }
+.fs-stmt-amt:focus { border-color:var(--violet); outline:2px solid var(--focus); outline-offset:2px; }
+.fs-calc-btn { margin:10px 16px 12px; padding:10px 20px; min-height:44px; background:#f0f2ff; border:2px solid var(--violet); border-radius:8px; font-family:Arial,sans-serif; font-size:.875rem; font-weight:700; color:var(--violet); cursor:pointer; transition:background .2s; }
+.fs-calc-btn:hover { background:#dde2ff; }
+.fs-calc-btn:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+.fs-drop-zone { background:#f8f9ff; border:2px dashed #aab; border-radius:10px; padding:10px; min-height:120px; display:flex; flex-direction:column; gap:6px; transition:border-color .2s,background .2s; }
+.fs-drop-zone.drag-over { border-color:var(--orange); background:#fff9e6; }
+.fs-drop-zone.wrong-flash { border-color:var(--red); background:#fce4ec; animation:wrongFlash .4s ease; }
+@keyframes wrongFlash { 0%{background:#fce4ec} 50%{background:#ffcdd2} 100%{background:#fce4ec} }
+.fs-drop-zone-label { font-size:.875rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#888; text-align:center; margin-bottom:6px; }
+.acct-chip { background:white; border:2px solid var(--mid); border-radius:6px; padding:5px 10px; font-size:.875rem; font-weight:700; cursor:grab; user-select:none; transition:border-color .2s,box-shadow .2s; color:var(--ink); text-align:center; }
+.acct-chip:hover { border-color:var(--violet); box-shadow:0 2px 8px rgba(38,45,104,.2); }
+.acct-chip.dragging { opacity:.5; cursor:grabbing; }
+.acct-chip.placed-correct { border-color:var(--green); background:#e8f5e9; cursor:default; }
+.acct-chip.placed-wrong { border-color:var(--red); background:#fce4ec; }
+.fs-amount-section { margin-top:14px; }
+.fs-amount-section h4 { font-family:'Bungee',cursive; font-size:.875rem; color:var(--violet); margin-bottom:10px; }
+.fs-amount-row { display:flex; align-items:center; gap:10px; margin-bottom:7px; font-size:.875rem; flex-wrap:wrap; }
+.fs-amount-label { flex:1; min-width:140px; color:var(--ink); }
+.fs-amount-input { width:100px; border:1px solid var(--mid); border-radius:4px; padding:5px 8px; font-family:'Roboto Slab',serif; font-size:.875rem; text-align:right; outline:none; background:white; color:var(--ink); }
+.fs-amount-input:focus { border-color:var(--violet); }
+.fs-submit-btn { padding:10px 22px; background:var(--violet); border:none; border-radius:8px; font-family:'Bungee',cursive; font-size:1rem; color:white; cursor:pointer; letter-spacing:1px; margin-top:10px; transition:background .2s; }
+.fs-submit-btn:hover { background:var(--violet-lt); }
+
+/* Closing entries */
+.closing-block { background:#f8f6f0; border:1px solid var(--mid); border-radius:8px; padding:13px 16px; margin-bottom:11px; }
+.mc-opt { display:block; width:100%; text-align:left; background:white; border:2px solid var(--mid); border-radius:8px; padding:12px 16px; margin-bottom:8px; cursor:pointer; font-family:Arial,sans-serif; font-size:.95rem; color:var(--ink); min-height:44px; transition:border-color .2s, background .2s; }
+.mc-opt:hover { border-color:var(--violet); }
+.mc-opt.selected { border-color:var(--violet); background:#f1eefc; font-weight:600; }
+.mc-opt.correct-final { border-color:var(--green); background:#e8f5e9; }
+.mc-opt.wrong-final { border-color:var(--red); background:#fce4ec; }
+.mc-opt:disabled { cursor:default; }
+.closing-tbl { width:100%; border-collapse:collapse; margin-bottom:8px; }
+.closing-tbl th { background:var(--violet); color:white; font-size:.875rem; font-weight:700; padding:8px 10px; text-align:left; }
+.closing-tbl td { padding:6px 8px; border-bottom:1px solid var(--mid); vertical-align:middle; }
+.closing-tbl tr:last-child td { border-bottom:none; }
+.closing-tbl select { width:100%; border:1px solid var(--mid); border-radius:4px; padding:5px 6px; font-family:Arial,sans-serif; font-size:.875rem; color:var(--ink); background:white; outline:none; min-height:36px; }
+.closing-tbl select:focus { border-color:var(--violet); outline:2px solid var(--focus); outline-offset:2px; }
+.closing-tbl-input { width:100%; border:1px solid var(--mid); border-radius:4px; padding:5px 6px; font-family:'Roboto Slab',serif; font-size:.875rem; text-align:right; outline:none; background:white; color:var(--ink); min-height:36px; }
+.closing-tbl-input:focus { border-color:var(--violet); outline:2px solid var(--focus); outline-offset:2px; }
+.closing-hint { font-size:.875rem; color:#555; margin-bottom:10px; font-style:italic; }
+.closing-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+.closing-label { font-size:.875rem; min-width:52px; color:#444; }
+.closing-select { flex:1; min-width:130px; border:1px solid var(--mid); border-radius:4px; padding:5px 6px; font-family:Arial,sans-serif; font-size:.875rem; outline:none; background:white; color:var(--ink); }
+.closing-select:focus { border-color:var(--violet); }
+.closing-select.error { border-color:var(--red); }
+.closing-amt { width:85px; border:1px solid var(--mid); border-radius:4px; padding:5px 6px; font-family:'Roboto Slab',serif; font-size:.875rem; text-align:right; outline:none; background:white; color:var(--ink); }
+.closing-amt:focus { border-color:var(--violet); }
+.zero-note { font-size:.75rem; color:#666; font-style:italic; margin-top:5px; display:block; }
+
+/* CHECK section */
+.check-section { background:var(--violet); border-radius:10px; padding:18px 20px; margin-top:20px; border:2px solid var(--orange); position:relative; text-align:center; }
+.check-section::before { content:'CHECK'; position:absolute; top:-11px; left:50%; transform:translateX(-50%); font-family:'Bungee',cursive; font-size:.875rem; letter-spacing:3px; color:var(--orange); background:var(--violet); padding:0 10px; }
+.check-title { font-family:'Bungee',cursive; font-size:1rem; color:var(--orange); margin:4px 0; }
+.check-question { font-size:.875rem; color:rgba(255,255,255,.88); margin-bottom:13px; line-height:1.6; font-family:Arial,sans-serif; }
+.check-input-row { display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; }
+.check-input { border:2px solid var(--orange); border-radius:6px; padding:9px 14px; font-family:'Bungee',cursive; font-size:1.1rem; background:rgba(255,255,255,.1); color:white; width:150px; text-align:center; outline:none; letter-spacing:2px; }
+.check-input::placeholder { color:rgba(255,255,255,.75); font-size:.875rem; letter-spacing:0; }
+.check-input:focus { border-color:white; background:rgba(255,255,255,.15); }
+.check-btn { padding:12px 20px; min-height:44px; background:var(--orange); border:none; border-radius:6px; font-family:'Bungee',cursive; font-size:1rem; color:var(--violet); cursor:pointer; letter-spacing:1px; transition:background .15s; }
+.check-btn:hover { background:var(--orange-lt); }
+.check-btn:disabled { opacity:.4; cursor:default; }
+.check-feedback { margin-top:11px; border-radius:6px; padding:10px 13px; font-size:.875rem; line-height:1.6; display:none; text-align:left; }
+.check-feedback.show { display:block; }
+.check-feedback.correct  { background:rgba(10,113,58,.3);  border-left:4px solid #4caf50; color:#c8f0d8; }
+.check-feedback.wrong    { background:rgba(229,31,54,.25); border-left:4px solid #ef9a9a; color:#ffd4d8; }
+.check-feedback.revealed { background:rgba(255,159,28,.2); border-left:4px solid var(--orange); color:#fff3cd; }
+.check-feedback strong { font-family:'Roboto Slab',serif; }
+.check-attempts { font-size:.875rem; color:rgba(255,255,255,.85); margin-top:5px; text-align:center; }
+.attempt-bar { display:flex; gap:4px; justify-content:center; margin-top:7px; }
+.attempt-dot { width:9px; height:9px; border-radius:50%; transition:background .3s; }
+.attempt-dot.used { background:rgba(229,31,54,.7); }
+.attempt-dot.remaining { background:rgba(255,255,255,.6); }
+@keyframes checkPulse { 0%{box-shadow:0 0 0 0 rgba(255,159,28,.6)} 70%{box-shadow:0 0 0 14px rgba(255,159,28,0)} 100%{box-shadow:0 0 0 0 rgba(255,159,28,0)} }
+.check-section.unlocked { animation:checkPulse .6s ease-out; border-color:#4caf50; }
+.next-phase-btn { display:none; margin:13px auto 0; padding:11px 26px; background:var(--green); border:none; border-radius:8px; font-family:'Bungee',cursive; font-size:1rem; color:white; cursor:pointer; letter-spacing:1px; transition:background .15s; }
+.next-phase-btn:hover { background:var(--green-lt); }
+.next-phase-btn.show { display:block; }
+
+/* Viewer toggle */
+.viewer-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; background:#f0f2ff; border:2px solid var(--violet); border-radius:8px; font-family:Arial,sans-serif; font-size:.875rem; font-weight:700; color:var(--violet); cursor:pointer; margin-bottom:12px; margin-right:8px; transition:background .2s; }
+.viewer-btn:hover { background:#dde0f0; }
+.viewer-panel { background:#f8f8ff; border:1px solid var(--mid); border-radius:8px; padding:14px; margin-bottom:14px; display:none; }
+.viewer-panel.open { display:block; }
+.viewer-panel h4 { font-family:'Bungee',cursive; font-size:.875rem; color:var(--violet); margin-bottom:10px; }
+
+/* ── REFLECTION GATE ── */
+#reflection-gate-screen { display:none; }
+#reflection-gate-screen.active { display:block; min-height:100vh; }
+.gate-wrap { max-width:620px; margin:0 auto; padding:40px 20px; }
+.gate-card { background:white; border-radius:16px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,.3); border:3px solid var(--orange); }
+.gate-header { background:var(--violet); padding:24px 28px; border-bottom:4px solid var(--orange); text-align:center; }
+.gate-header h2 { font-family:'Bungee',cursive; font-size:clamp(1.1rem,3vw,1.6rem); color:var(--orange); margin-bottom:6px; }
+.gate-header p { font-size:.875rem; color:rgba(255,255,255,.7); }
+.gate-body { padding:26px 28px; }
+.gate-prompt { font-size:1rem; line-height:1.7; color:#333; margin-bottom:16px; }
+.gate-textarea { width:100%; min-height:120px; border:2px solid var(--mid); border-radius:8px; padding:12px; font-family:Arial,sans-serif; font-size:1rem; line-height:1.6; resize:vertical; outline:none; color:var(--ink); }
+.gate-textarea:focus { border-color:var(--violet); }
+.gate-char { font-size:.875rem; margin-top:5px; margin-bottom:14px; }
+.gate-submit-btn { width:100%; padding:13px; background:var(--violet); border:none; border-radius:10px; font-family:'Bungee',cursive; font-size:1rem; color:white; cursor:pointer; letter-spacing:1px; transition:background .2s,transform .15s; }
+.gate-submit-btn:hover:not(:disabled) { background:var(--violet-lt); transform:translateY(-1px); }
+.gate-submit-btn:disabled { opacity:.4; cursor:default; }
+.gate-error { color:var(--red); font-size:.875rem; margin-top:6px; display:none; }
+.gate-error.show { display:block; }
+
+/* ── COMPLETE SCREEN ── */
+#complete-screen { display:none; }
+#complete-screen.active { display:block; min-height:100vh; }
+.complete-wrap { max-width:700px; margin:0 auto; padding:36px 20px; text-align:center; }
+.complete-box { background:white; border-radius:16px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,.3); border:3px solid var(--orange); }
+.complete-banner { background:var(--violet); padding:28px 24px; border-bottom:4px solid var(--orange); }
+.complete-banner h2 { font-family:'Bungee',cursive; font-size:clamp(1.3rem,3.5vw,1.9rem); color:var(--orange); margin-bottom:7px; }
+.complete-banner p { font-size:.875rem; color:rgba(255,255,255,.7); }
+.complete-body { padding:26px 26px; }
+.score-display { font-family:'Bungee',cursive; font-size:3.2rem; color:var(--violet); display:block; margin:10px 0; }
+.score-label { font-size:.875rem; letter-spacing:2px; text-transform:uppercase; color:#888; }
+.score-breakdown { display:flex; flex-direction:column; gap:5px; margin:14px 0; text-align:left; }
+.score-row { display:flex; justify-content:space-between; align-items:center; padding:7px 13px; border-radius:6px; font-size:.875rem; background:var(--offwhite); border:1px solid var(--mid); }
+.score-row-label { color:#444; }
+.score-row-val { font-family:'Roboto Slab',serif; font-weight:700; color:var(--violet); }
+.badge-msg { font-size:.875rem; color:#555; line-height:1.6; margin:14px 0; padding:12px 16px; background:#fff3e0; border:2px solid var(--orange); border-radius:10px; }
+.download-btn { display:inline-block; padding:11px 26px; background:var(--orange); border:none; border-radius:8px; font-family:'Bungee',cursive; font-size:1rem; color:var(--violet); cursor:pointer; text-decoration:none; letter-spacing:1px; transition:background .2s; margin:6px; }
+.download-btn:hover { background:var(--orange-lt); }
+.replay-btn { display:inline-block; padding:11px 26px; background:var(--violet); border:none; border-radius:8px; font-family:'Bungee',cursive; font-size:1rem; color:white; cursor:pointer; letter-spacing:1px; transition:background .2s; margin:6px; }
+.replay-btn:hover { background:var(--violet-lt); }
+.exit-scorm-btn { display:inline-block; padding:11px 24px; min-height:44px; background:var(--green); border:none; border-radius:8px; font-family:'Bungee',cursive; font-size:1rem; color:white; cursor:pointer; letter-spacing:1px; transition:background .2s; margin:6px; }
+.exit-scorm-btn:hover { background:var(--green-lt); }
+.exit-scorm-btn:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+.scorm-msg { font-size:.875rem; color:var(--green); font-weight:700; margin:12px 0; padding:9px 14px; background:#e8f5e9; border:1px solid var(--green); border-radius:8px; }
+
+@media (max-width:780px) {
+  .monopoly-board { grid-template-columns:60px repeat(9,44px) 60px; grid-template-rows:60px repeat(9,44px) 60px; }
+  .board-wrapper { flex-direction:column; align-items:center; }
+  .sidebar { max-width:100%; min-width:0; width:100%; }
+  .fs-build-area { grid-template-columns:1fr; }
+}
+@media (max-width:540px) {
+  .monopoly-board { grid-template-columns:48px repeat(9,34px) 48px; grid-template-rows:48px repeat(9,34px) 48px; }
+  .space { font-size:.65rem; }
+}
+
+.level-selector-wrap { margin-top:16px; margin-bottom:4px; }
+.level-selector-label { font-size:1rem; font-weight:700; color:var(--violet); letter-spacing:1px; margin-bottom:10px; display:block; }
+.level-opt { display:flex; align-items:center; gap:14px; background:#1a2060; border:2px solid rgba(255,255,255,.2); border-radius:10px; padding:14px 16px; margin-bottom:10px; cursor:pointer; transition:border-color .2s, background .2s; text-align:left; width:100%; min-height:52px; touch-action:manipulation; color:white; font-family:Arial,sans-serif; }
+.level-opt:hover, .level-opt.selected { border-color:#FF9F1C; background:#262D68; }
+.level-opt:hover .level-badge, .level-opt.selected .level-badge { background:#FF9F1C; color:#262D68; }
+.level-badge { min-width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.2); color:white; font-family:'Bungee',cursive; font-size:1.1rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .2s, color .2s; }
+.level-info { display:flex; flex-direction:column; gap:3px; }
+.level-title { font-family:'Bungee',cursive; font-size:1rem; color:white; letter-spacing:.5px; }
+.level-desc { font-size:.875rem; color:rgba(255,255,255,.85); line-height:1.4; }
+.level-txn { font-size:.8rem; color:#FF9F1C; margin-top:2px; font-weight:700; }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<div id="sr-announce" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="sr-alert"    class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- ══ SETUP ══ -->
+<div class="setup-screen" id="setup-screen" role="main">
+  <div class="setup-box">
+    <div class="setup-header">
+      <span class="setup-logo">Boardwalk Books LLC</span>
+      <span class="setup-sub">Crestwood Heights</span>
+      <span style="display:block;font-size:.75rem;color:rgba(255,255,255,.80);margin-top:6px;letter-spacing:.5px;">&#169; 2026 Jennifer Coon. All rights reserved. Free for educational use. Not for resale.</span>
+    </div>
+    <div class="setup-body">
+      <div class="setup-rules"><strong>Your Mission:</strong> You are the accountant for Boardwalk Books LLC, a real estate company investing across Crestwood Heights. Choose your level, record every transaction, then follow the data through adjustments and into the financial statements.</div>
+
+      <span class="setup-section-label">Your Name</span>
+      <div class="name-row"><div class="player-dot p1-dot" aria-hidden="true"></div><input type="text" class="name-input" id="p1-name" placeholder="Enter your name" autocomplete="given-name" aria-label="Your name" aria-required="true"></div>
+      <div class="setup-rules" style="margin-top:10px;background:#e8f5e9;border-left-color:#0A713A;">
+        <strong>Your opponent:</strong> City Properties Inc. 🏢 plays automatically after each of your turns. When they land on your properties you record rent received. When you land on theirs you pay rent. All transactions are yours to record.
+      </div>
+
+      <div class="level-selector-wrap">
+        <p class="level-selector-label">Select Your Level</p>
+        <div role="radiogroup" aria-label="Game level selection">
+          <button type="button" class="level-opt selected" id="level-btn-1" aria-pressed="true" onclick="setLevel(1)">
+            <span class="level-badge" aria-hidden="true">1</span>
+            <span class="level-info">
+              <span class="level-title">Level 1: Getting Started</span>
+              <span class="level-desc">1 round around the board. All property landings require a purchase transaction.</span>
+              <span class="level-txn">Approx. 8-12 transactions</span>
+            </span>
+          </button>
+          <button type="button" class="level-opt" id="level-btn-2" aria-pressed="false" onclick="setLevel(2)">
+            <span class="level-badge" aria-hidden="true">2</span>
+            <span class="level-info">
+              <span class="level-title">Level 2: Building Equity</span>
+              <span class="level-desc">2 rounds around the board. You choose whether to purchase each property you land on.</span>
+              <span class="level-txn">Approx. 10-16 transactions</span>
+            </span>
+          </button>
+          <button type="button" class="level-opt" id="level-btn-3" aria-pressed="false" onclick="setLevel(3)">
+            <span class="level-badge" aria-hidden="true">3</span>
+            <span class="level-info">
+              <span class="level-title">Level 3: Full Portfolio</span>
+              <span class="level-desc">2 rounds around the board. All property landings require a purchase transaction.</span>
+              <span class="level-txn">Approx. 16-22 transactions</span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div class="setup-rules" style="margin-top:10px;background:#f0f2ff;border-left-color:#262D68;font-size:.875rem;">
+        <strong>Accessibility:</strong> This game is designed for desktop or tablet use with a keyboard and mouse. If you use assistive technology or require an accessible format, please contact your instructor.
+      </div>
+
+
+      <div class="closing-question">
+        <p>Does your course use <strong>Retained Earnings</strong> directly in closing entries?</p>
+        <div class="closing-opts">
+          <button type="button" class="closing-opt" id="close-yes" aria-pressed="true" onclick="setClosingMethod('re')"><span class="co-icon">✅</span>Yes<span class="co-sub">Close directly to Retained Earnings</span></button>
+          <button type="button" class="closing-opt" id="close-no"  aria-pressed="false" onclick="setClosingMethod('is')"><span class="co-icon">📊</span>No<span class="co-sub">Use Income Summary first</span></button>
+        </div>
+      </div>
+
+      <div class="closing-question">
+        <p>Which accounting standards does your course follow?</p>
+        <div class="closing-opts">
+          <button type="button" class="closing-opt" id="std-gaap" aria-pressed="true" onclick="setStandard('gaap')"><span class="co-icon">🇺🇸</span>US GAAP<span class="co-sub">Standard US terminology</span></button>
+          <button type="button" class="closing-opt" id="std-ifrs" aria-pressed="false" onclick="setStandard('ifrs')"><span class="co-icon">🌍</span>IFRS<span class="co-sub">International terminology</span></button>
+        </div>
+      </div>
+
+      <button class="start-btn" onclick="startGame()">Open the Books &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GAME SCREEN ══ -->
+<div id="game-screen" id="main-content">
+  <!-- CPU turn modal -->
+  <div class="cpu-modal-overlay hidden" id="cpu-modal" role="dialog" aria-modal="true" aria-labelledby="cpu-modal-title" aria-describedby="cpu-modal-text">
+    <div class="cpu-modal-box">
+      <span class="cpu-modal-title" id="cpu-modal-title">🏢 City Properties Inc.</span>
+      <p class="cpu-modal-text" id="cpu-modal-text">Taking their turn...</p>
+      <button class="cpu-modal-close" id="cpu-modal-close-btn" onclick="closeCPUModal()">OK, Got It</button>
+    </div>
+  </div>
+
+  <header class="game-header">
+    <div><div class="game-title">Boardwalk Books LLC<span>Crestwood Heights</span></div></div>
+    <div class="scoreboard" id="scoreboard"></div>
+    <div class="round-badge" id="round-badge">Round 1 of 2</div>
+  </header>
+  <div class="board-wrapper">
+    <div class="monopoly-board" id="monopoly-board" role="region" aria-label="Crestwood Heights game board" aria-live="polite"></div>
+    <div class="sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-header">🎲 Roll the Dice</div>
+        <div class="sidebar-body" style="text-align:center;">
+          <div class="dice-area" style="margin-bottom:9px;"><div class="die" id="die1" aria-label="Die 1">⚀</div><div class="die" id="die2" aria-label="Die 2">⚀</div></div>
+          <button class="roll-btn" id="roll-btn" onclick="rollDice()">Roll Dice</button>
+          <div class="status-msg" id="status-msg" role="status" aria-live="polite" style="margin-top:9px;">Enter your name and roll!</div>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-header">🏠 Properties Owned</div>
+        <div class="sidebar-body" id="properties-list"><p style="color:#595959;font-size:.875rem;">No properties yet.</p></div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-header">📋 Transaction Log</div>
+        <div class="sidebar-body" id="transaction-log" style="max-height:170px;overflow-y:auto;"><p style="color:#595959;font-size:.875rem;">Transactions appear here.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ JOURNAL ENTRY MODAL ══ -->
+<div class="overlay" id="je-overlay" role="dialog" aria-modal="true" aria-labelledby="je-title">
+  <div class="modal-box">
+    <div class="modal-header"><span class="modal-tag" id="je-tag">Entry Required</span><div class="modal-title" id="je-title">Record This Transaction</div></div>
+    <div class="modal-body">
+      <div class="transaction-desc" id="je-desc"></div>
+      <span class="je-label">Which two accounts are affected? Does each one increase or decrease?</span>
+      <table class="je-table" aria-label="Transaction entry">
+        <thead><tr><th style="width:58%">Account</th><th style="width:42%">Increase or Decrease?</th></tr></thead>
+        <tbody id="je-tbody"></tbody>
+      </table>
+      <div class="attempt-note" id="je-attempt-note" aria-live="polite">Attempt 1 of 2</div>
+      <div class="je-feedback" id="je-feedback" aria-live="polite" aria-atomic="true"></div>
+      <button class="modal-btn primary" id="je-submit-btn" onclick="submitJE()">Submit Entry</button>
+      <button class="modal-btn success" id="je-continue-btn" onclick="continueAfterJE()" style="display:none;margin-top:7px;">Continue &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DECISION MODAL ══ -->
+<div class="overlay" id="decision-overlay" role="dialog" aria-modal="true" aria-labelledby="decision-title">
+  <div class="modal-box">
+    <div class="modal-header"><span class="modal-tag">Property Decision</span><div class="modal-title" id="decision-title">Do You Want to Buy?</div></div>
+    <div class="modal-body">
+      <div class="transaction-desc" id="decision-desc"></div>
+      <div class="decision-btns"><button class="modal-btn primary" onclick="buyProperty()">Buy It!</button><button class="modal-btn secondary" onclick="passProperty()">Pass</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CARD MODAL ══ -->
+<div class="overlay" id="card-overlay" role="dialog" aria-modal="true" aria-labelledby="card-title">
+  <div class="modal-box">
+    <div class="modal-header"><span class="modal-tag" id="card-tag">Chance</span><div class="modal-title" id="card-title">Draw a Card</div></div>
+    <div class="modal-body">
+      <div class="card-drawn" id="card-display" role="region" aria-live="polite" aria-label="Property Management Card"><span class="card-icon" id="card-icon">🃏</span><span class="card-type" id="card-type">CHANCE</span><span class="card-text" id="card-text"></span></div>
+      <button class="modal-btn primary" onclick="acknowledgeCard()">Record Entry &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ACCOUNTING CYCLE ══ -->
+<div id="cycle-screen">
+  <div class="cycle-header"><h1>Accounting Cycle: Boardwalk Books LLC</h1><p>Crestwood Heights &bull; Complete all 5 phases.</p><p style="font-size:.75rem;color:rgba(255,255,255,.75);margin-top:3px;">&#169; 2026 Jennifer Coon. All rights reserved. Free for educational use. Not for resale.</p></div>
+  <div class="phase-pips" role="navigation" aria-label="Phases" id="phase-pips-nav"></div>
+  <div class="cycle-main" id="cycle-main"></div>
+</div>
+
+<!-- ══ REFLECTION GATE ══ -->
+<div id="reflection-gate-screen">
+  <div class="gate-wrap">
+    <div class="gate-card">
+      <div class="gate-header">
+        <h2>Almost There!</h2>
+        <p>Before you see your results, take a moment to reflect on the accounting cycle.</p>
+      </div>
+      <div class="gate-body">
+        <p class="gate-prompt">What was the most challenging part of following your transactions through to the financial statements? Identify one specific transaction from your game that changed how you think about where the numbers end up.</p>
+        <textarea class="gate-textarea" id="gate-reflection" placeholder="Write your reflection here (minimum 40 characters)..." aria-label="Reflection" aria-required="true"></textarea>
+        <div class="gate-char" id="gate-char-count" style="color:#888;">0 / 40 characters minimum</div>
+        <div class="gate-error" id="gate-error">Please write at least 40 characters before continuing.</div>
+        <button class="gate-submit-btn" onclick="submitReflection()">See My Results &rarr;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMPLETE SCREEN ══ -->
+<div id="complete-screen">
+  <div class="complete-wrap">
+    <div class="complete-box">
+      <div class="complete-banner"><h2>Books Closed!</h2><p>You completed the full accounting cycle for Boardwalk Books LLC in Crestwood Heights.</p></div>
+      <div class="complete-body">
+        <span class="score-label">Your Final Score</span>
+        <span class="score-display" id="final-score-display">0/100</span>
+        <div class="score-breakdown" id="score-breakdown"></div>
+        <div class="badge-msg" id="badge-msg" style="display:none;">Download your reflection card and submit it to your instructor per course instructions.</div>
+        <div style="margin:14px 0;">
+          <a id="download-card-btn" href="#" download="Boardwalk_Books_Reflection_Card.png" class="download-btn" style="display:none;">⬇ Download Reflection Card</a>
+          <button class="replay-btn" onclick="location.reload()">Play Again</button>
+          <button class="exit-scorm-btn" id="exit-scorm-btn" onclick="exitSCORM()" style="display:none;">✓ Submit and Exit</button>
+        </div>
+        <p id="exit-note" style="display:none;font-size:.875rem;color:#555;text-align:center;margin-top:6px;">Download your reflection card first, then click Submit and Exit to record your score.</p>
+        <canvas id="reflection-canvas" style="display:none;" aria-hidden="true"></canvas>
+        <div class="scorm-msg" id="scorm-msg" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// SCORM
+const SCORM=(function(){
+  let api=null,ok=false;
+  function find(w){try{let t=0;while(w&&!w.API&&w.parent&&w.parent!==w&&t<10){w=w.parent;t++;}return(w&&w.API)||null;}catch(e){return null;}}
+  return{
+    init(){try{api=find(window);if(api){api.LMSInitialize('');ok=true;}}catch(e){}return ok;},
+    // Save score and status immediately but do NOT call LMSFinish yet
+    // LMSFinish is deferred until student clicks exit or unloads the page
+    // This prevents Canvas from redirecting before the student downloads their card
+    save(score){
+      if(!api||!ok)return;
+      try{
+        api.LMSSetValue('cmi.core.score.raw',score);
+        api.LMSSetValue('cmi.core.score.min','0');
+        api.LMSSetValue('cmi.core.score.max','90');
+        api.LMSSetValue('cmi.core.lesson_status','completed');
+        api.LMSCommit(''); // commits data without finishing session
+      }catch(e){}
+    },
+    finish(){
+      if(!api||!ok)return;
+      try{api.LMSFinish('');}catch(e){}
+    }
+  };
+})();
+const scormOK=SCORM.init();
+
+// Attribution
+console.log('%c Boardwalk Books LLC: Crestwood Heights ', 'background:#262D68;color:#FF9F1C;font-size:14px;font-weight:bold;padding:4px 8px;border-radius:4px;');
+console.log('%c © 2026 Jennifer Coon, CFE, CIA. All rights reserved. ', 'color:#262D68;font-size:11px;');
+console.log('%c Free for educational use. Not for resale. Contact jcoonconsulting@gmail.com ', 'color:#555;font-size:10px;');
+
+// BOARD DATA
+const SPACES=[
+  {id:0, name:'Fiscal Year Start', icon:'📅',                 type:'go',      icon:'📅',color:null,    price:0,  rent:0,  group:'corner'},
+  {id:1, name:'Maple Street',       type:'property',icon:'🏠',color:'purple',price:60, rent:10, group:'purple'},
+  {id:2, name:'Ledger Card',          type:'ledger',      icon:'📒',color:null,    price:0,  rent:0,  group:''},
+  {id:3, name:'Elm Avenue',         type:'property',icon:'🏠',color:'purple',price:60, rent:10, group:'purple'},
+  {id:4, name:'Income Tax',         type:'tax',     icon:'💸',color:null,    price:0,  rent:100,group:''},
+  {id:5, name:'Property Management',type:'propmgmt', icon:'📋',color:null,  price:0,  rent:0,  group:''},
+  {id:6, name:'Riverside Drive',    type:'property',icon:'🏠',color:'lblue', price:100,rent:20, group:'lblue'},
+  {id:7, name:'Risk Card',            type:'risk',  icon:'🃏',color:null,    price:0,  rent:0,  group:''},
+  {id:8, name:'Harbor View Lane',   type:'property',icon:'🏠',color:'lblue', price:100,rent:20, group:'lblue'},
+  {id:9, name:'Sunset Boulevard',   type:'property',icon:'🏠',color:'lblue', price:120,rent:25, group:'lblue'},
+  {id:10,name:'On Site Visit',      type:'jail',    icon:'⛓️',color:null,    price:0,  rent:0,  group:'corner'},
+  {id:11,name:'Commerce Park',      type:'property',icon:'🏠',color:'pink',  price:140,rent:30, group:'pink'},
+  {id:12,name:'Crestwood Electric', type:'utility', icon:'⚡',color:'util',  price:150,rent:40, group:'util'},
+  {id:13,name:'Midtown Plaza',      type:'property',icon:'🏠',color:'pink',  price:140,rent:30, group:'pink'},
+  {id:14,name:'Financial District', type:'property',icon:'🏠',color:'pink',  price:160,rent:35, group:'pink'},
+  {id:15,name:'Property Management',type:'propmgmt', icon:'📋',color:null,  price:0,  rent:0,  group:''},
+  {id:16,name:'Crestwood Commons',  type:'property',icon:'🏠',color:'orange',price:180,rent:40, group:'orange'},
+  {id:17,name:'Ledger Card',          type:'ledger',      icon:'📒',color:null,    price:0,  rent:0,  group:''},
+  {id:18,name:'Downtown Square',    type:'property',icon:'🏠',color:'orange',price:180,rent:40, group:'orange'},
+  {id:19,name:'Market Street',      type:'property',icon:'🏠',color:'orange',price:200,rent:45, group:'orange'},
+  {id:20,name:'Lunch Break',       type:'parking', icon:'🅿️',color:null,    price:0,  rent:0,  group:'corner'},
+  {id:21,name:'Northside Terrace',  type:'property',icon:'🏠',color:'red',   price:220,rent:50, group:'red'},
+  {id:22,name:'Risk Card',            type:'risk',  icon:'🃏',color:null,    price:0,  rent:0,  group:''},
+  {id:23,name:'Eastside Crossing',  type:'property',icon:'🏠',color:'red',   price:220,rent:50, group:'red'},
+  {id:24,name:'Millbrook Road',     type:'property',icon:'🏠',color:'red',   price:240,rent:55, group:'red'},
+  {id:25,name:'Property Management',type:'propmgmt', icon:'📋',color:null,  price:0,  rent:0,  group:''},
+  {id:26,name:'Grand Avenue',       type:'property',icon:'🏠',color:'yellow',price:260,rent:60, group:'yellow'},
+  {id:27,name:'Lakeshore Drive',    type:'property',icon:'🏠',color:'yellow',price:260,rent:60, group:'yellow'},
+  {id:28,name:'Crestwood Water',    type:'utility', icon:'💧',color:'util',  price:150,rent:40, group:'util'},
+  {id:29,name:'Uptown Center',      type:'property',icon:'🏠',color:'yellow',price:280,rent:65, group:'yellow'},
+  {id:30,name:'IRS Audit',         type:'gotojail',icon:'👮',color:null,    price:0,  rent:0,  group:'corner'},
+  {id:31,name:'Westfield Boulevard',type:'property',icon:'🏠',color:'pgreen',price:300,rent:70, group:'pgreen'},
+  {id:32,name:'Pinnacle Park',      type:'property',icon:'🏠',color:'pgreen',price:300,rent:70, group:'pgreen'},
+  {id:33,name:'Ledger Card',          type:'ledger',      icon:'📒',color:null,    price:0,  rent:0,  group:''},
+  {id:34,name:'Summit Heights',     type:'property',icon:'🏠',color:'pgreen',price:320,rent:75, group:'pgreen'},
+  {id:35,name:'Property Management',type:'propmgmt', icon:'📋',color:null,  price:0,  rent:0,  group:''},
+  {id:36,name:'Risk Card',            type:'risk',  icon:'🃏',color:null,    price:0,  rent:0,  group:''},
+  {id:37,name:'City Hall Tower',    type:'property',icon:'🏢',color:'dblue', price:350,rent:80, group:'dblue'},
+  {id:38,name:'Luxury Tax',         type:'luxtax',  icon:'💎',color:null,    price:0,  rent:75, group:''},
+  {id:39,name:'Crestwood HQ',       type:'property',icon:'🏢',color:'dblue', price:400,rent:100,group:'dblue'},
+];
+const STRIP={purple:'strip-purple',lblue:'strip-lblue',pink:'strip-pink',orange:'strip-orange',red:'strip-red',yellow:'strip-yellow',pgreen:'strip-pgreen',dblue:'strip-dblue',rr:'strip-rr',util:'strip-util'};
+const PROP_CSS={purple:'--prop-purple',lblue:'--prop-lblue',pink:'--prop-pink',orange:'--prop-orange',red:'--prop-red',yellow:'--prop-yellow',pgreen:'--prop-pgreen',dblue:'--prop-dblue',rr:'--prop-rr',util:'--prop-util'};
+
+// CARDS (FIXES: rental-revenue + supplies-credit)
+const RISK_CARDS=[
+  {text:'You provided consulting services. Collect $150.',type:'revenue',amount:150},
+  {text:'A referral bonus arrived. Collect $100.',type:'revenue',amount:100},
+  {text:'Pay building maintenance and repairs: $80.',type:'expense',amount:80,acct:'Repairs Expense'},
+  {text:'Property insurance premium due. Pay $60.',type:'expense',amount:60,acct:'Insurance Expense'},
+  {text:'Bank grants a short-term loan of $200.',type:'loan',amount:200},
+  {text:'Quarterly interest on bank loan due. Pay $30.',type:'expense',amount:30,acct:'Interest Expense'},
+  {text:'Collected a tenant deposit. Receive $120 (deferred revenue).',type:'deferred',amount:120},
+  {text:'Office supplies expense paid. Pay $50.',type:'expense',amount:50,acct:'Supplies Expense'},
+];
+const LEDGER_CARDS=[
+  // FIX 1: rental-revenue => Rental Revenue
+  {text:'Long-term tenant paid monthly rent. Receive $90.',type:'rental-revenue',amount:90},
+  {text:'Collected a property management fee. Receive $110.',type:'revenue',amount:110},
+  {text:'Office utility bill arrived. Pay $70.',type:'expense',amount:70,acct:'Utilities Expense'},
+  {text:'Property tax assessment due. Pay $120.',type:'expense',amount:120,acct:'Tax Expense'},
+  {text:'New investor buys shares. Receive $300 (Common Stock).',type:'equity',amount:300},
+  {text:'Company pays a cash dividend. Pay $80.',type:'dividend',amount:80},
+  // FIX 2: supplies-credit => Dr. Supplies (asset) / Cr. AP, triggers adjusting entry
+  {text:'Purchased office supplies on account for $40. (A supplies used adjustment will be required at period end.)',type:'supplies-credit',amount:40},
+  {text:'Collected cash from Accounts Receivable. Receive $60.',type:'ar-collect',amount:60},
+];
+
+// PROPERTY MANAGEMENT CARDS
+const PROP_MGMT_CARDS=[
+  // Equipment Repair (AP)
+  {text:'The HVAC unit at Crestwood Heights failed overnight. Your property manager arranged emergency repairs. An invoice arrived today.',type:'pm-ap',amount:120,acct:'Repairs Expense',tag:'Property Management'},
+  {text:'The elevator in Building B is out of service. Maintenance crew completed repairs this morning and submitted an invoice.',type:'pm-ap',amount:95,acct:'Repairs Expense',tag:'Property Management'},
+  {text:'A burst pipe on the third floor required immediate plumbing service. Invoice received, payment due next month.',type:'pm-ap',amount:110,acct:'Repairs Expense',tag:'Property Management'},
+  // Advertising (AP)
+  {text:'Two units are sitting vacant. Your property manager placed listings on three rental platforms. Invoice received, payment due in 30 days.',type:'pm-ap',amount:80,acct:'Advertising Expense',tag:'Property Management'},
+  {text:'Crestwood Heights sponsored the neighborhood business directory this quarter. Invoice on file, payment due next cycle.',type:'pm-ap',amount:75,acct:'Advertising Expense',tag:'Property Management'},
+  {text:'Your property manager ran a social media campaign to promote the newly renovated units. Invoice received, payment due next month.',type:'pm-ap',amount:100,acct:'Advertising Expense',tag:'Property Management'},
+  // Legal Fees (AP)
+  {text:'A tenant dispute required a letter from your property attorney. Invoice received and payment due within 30 days.',type:'pm-ap',amount:150,acct:'Legal Expense',tag:'Property Management'},
+  {text:'Your attorney reviewed and updated the standard lease agreement for all units. Invoice on file, payment due next cycle.',type:'pm-ap',amount:130,acct:'Legal Expense',tag:'Property Management'},
+  {text:'A former tenant filed a small claims complaint. Legal counsel responded on your behalf. Invoice received, payment due next month.',type:'pm-ap',amount:140,acct:'Legal Expense',tag:'Property Management'},
+  // Unearned Revenue (Cash / Deferred Revenue)
+  {text:'A new tenant signed a six-month lease and paid the first two months upfront before move-in.',type:'pm-deferred',amount:200,tag:'Property Management'},
+  {text:'A corporate client reserved the entire fourth floor for the next quarter and wired payment in advance.',type:'pm-deferred',amount:180,tag:'Property Management'},
+  {text:'A tenant paid a security deposit plus last month\'s rent before taking occupancy.',type:'pm-deferred',amount:160,tag:'Property Management'},
+];
+let propMgmtDeck=[];
+
+// CHART OF ACCOUNTS
+const ACCOUNTS=[
+  {group:'Assets',     name:'Cash'},
+  {group:'Assets',     name:'Accounts Receivable'},
+  {group:'Assets',     name:'Supplies'},
+  {group:'Assets',     name:'Prepaid Insurance'},
+  {group:'Assets',     name:'Property Asset'},
+  {group:'Assets',     name:'Accumulated Depreciation'},
+  {group:'Liabilities',name:'Accounts Payable'},
+  {group:'Liabilities',name:'Notes Payable'},
+  {group:'Liabilities',name:'Interest Payable'},
+  {group:'Liabilities',name:'Deferred Revenue'},
+  {group:'Equity',     name:'Common Stock'},
+  {group:'Equity',     name:'Retained Earnings'},
+  {group:'Equity',     name:'Dividends'},
+  {group:'Revenue',    name:'Rental Revenue'},
+  {group:'Revenue',    name:'Service Revenue'},
+  {group:'Expenses',   name:'Depreciation Expense'},
+  {group:'Expenses',   name:'Insurance Expense'},
+  {group:'Expenses',   name:'Interest Expense'},
+  {group:'Expenses',   name:'Luxury Tax Expense'},
+  {group:'Expenses',   name:'Rent Expense'},
+  {group:'Expenses',   name:'Advertising Expense'},
+  {group:'Expenses',   name:'Legal Expense'},
+  {group:'Expenses',   name:'Repairs Expense'},
+  {group:'Expenses',   name:'Supplies Expense'},
+  {group:'Expenses',   name:'Tax Expense'},
+  {group:'Expenses',   name:'Utilities Expense'},
+  {group:'Closing',    name:'Income Summary'},
+];
+const COA_ORDER=ACCOUNTS.map(a=>a.name);
+const DEBIT_NORMAL=new Set(['Cash','Accounts Receivable','Supplies','Prepaid Insurance','Property Asset','Dividends','Advertising Expense','Depreciation Expense','Insurance Expense','Interest Expense','Legal Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense']);
+
+// Translate a debit/credit entry into plain increase/decrease language.
+// Works for contra accounts too (e.g. Accumulated Depreciation is credit-normal).
+function expectedChange(entry){
+  const debitNormal=DEBIT_NORMAL.has(entry.account);
+  if(entry.debit>0) return debitNormal?'increase':'decrease';
+  return debitNormal?'decrease':'increase';
+}
+function changeSelectHTML(id,lbl){
+  return `<select id="${id}" aria-label="${lbl}"><option value="">-- Select --</option><option value="increase">Increase</option><option value="decrease">Decrease</option></select>`;
+}
+// Which financial statement an account's ending balance belongs on.
+function classificationFor(account){
+  if(account==='Dividends') return 'RE';
+  if(account==='Retained Earnings'||account==='Common Stock') return 'EQBS';
+  const a=ACCOUNTS.find(x=>x.name===account);
+  if(!a) return null;
+  if(a.group==='Revenue'||a.group==='Expenses') return 'IS';
+  if(a.group==='Assets'||a.group==='Liabilities') return 'BS';
+  return null;
+}
+const STATEMENT_LABELS={IS:'Income Statement',RE:'Statement of Retained Earnings',BS:'Balance Sheet',EQBS:'Statement of Equity and Balance Sheet'};
+
+function acctSelectHTML(id,lbl,val='',excludeClosing=false){
+  const grps={};
+  ACCOUNTS.forEach(a=>{if(excludeClosing&&a.group==='Closing')return;if(!grps[a.group])grps[a.group]=[];grps[a.group].push(a.name);});
+  let h=`<select id="${id}" aria-label="${lbl}"><option value="">-- Select Account --</option>`;
+  Object.entries(grps).forEach(([g,ns])=>{h+=`<optgroup label="${g}">`;ns.forEach(n=>{
+    // Display IFRS name in dropdown but store COA name as value for consistent ledger lookup
+    const displayName=acctName(n);
+    h+=`<option value="${n}"${n===val?' selected':''}>${displayName}</option>`;
+  });h+=`</optgroup>`;});
+  return h+'</select>';
+}
+function sortByCOA(accts){return [...accts].sort((a,b)=>COA_ORDER.indexOf(a)-COA_ORDER.indexOf(b));}
+
+// STATE
+let closingMethod='re';
+let accountingStandard='gaap';
+let gameLevel=1; // 1=1 round forced, 2=2 rounds optional, 3=2 rounds forced
+function setLevel(n){
+  gameLevel=n;
+  [1,2,3].forEach(i=>{
+    const btn=document.getElementById('level-btn-'+i);
+    if(btn){btn.classList.toggle('selected',i===n);btn.setAttribute('aria-pressed',i===n?'true':'false');}
+  });
+}
+
+let playerName='', playerCash=1500, playerPos=0, playerRoundCount=0;
+let maxRounds=2;
+let cpuPos=0, cpuCash=1500, cpuRoundCount=0;
+let ownership={}; // spaceId -> 'player'|'cpu'
+let gameTransactions=[];
+let jeOnComplete=null, jeCorrectEntries=[], jeCurrentAttempt=0;
+let adjDepreciation=0, adjSuppliesUsed=0, suppliesOnBooks=false;
+let gameOver=false;
+let riskDeck=[], ledgerDeck=[];
+let currentCyclePhase=1, cycleVaultAttempts={};
+let cycleScores={je:0,adjCards:0,adj:0,classify:0,fs:0,completion:0};
+const CYCLE_MAX_SCORE=100; // je 30 + adjCards 10 + adj 10 + classify 20 + fs 20 + completion 10
+let vaultAnswers={};
+let savedUTBData=null, savedAdjEntries=[];
+let reflectionText='', finalScore=0;
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+// SETUP
+function setClosingMethod(m){closingMethod=m;document.getElementById('close-yes').setAttribute('aria-pressed',m==='re');document.getElementById('close-no').setAttribute('aria-pressed',m==='is');}
+function setStandard(s){
+  accountingStandard=s;
+  document.getElementById('std-gaap').setAttribute('aria-pressed',s==='gaap');
+  document.getElementById('std-ifrs').setAttribute('aria-pressed',s==='ifrs');
+}
+
+// IFRS terminology map
+const IFRS_TERMS={
+  'Accounts Receivable':'Trade Receivables',
+  'Accounts Payable':'Trade Payables',
+};
+const GAAP_TERMS={
+  'Trade Receivables':'Accounts Receivable',
+  'Trade Payables':'Accounts Payable',
+};
+
+// Return account name based on current standard
+function acctName(name){
+  if(accountingStandard==='ifrs'&&IFRS_TERMS[name]) return IFRS_TERMS[name];
+  return name;
+}
+// Reverse lookup: given display name, return COA name
+function coaName(displayName){
+  if(accountingStandard==='ifrs'&&GAAP_TERMS[displayName]) return GAAP_TERMS[displayName];
+  return displayName;
+}
+
+function startGame(){
+  const p1=document.getElementById('p1-name').value.trim();
+  if(!p1){document.getElementById('p1-name').classList.add('error');document.getElementById('p1-name').focus();return;}
+  playerName=p1;
+  maxRounds=(gameLevel===1)?1:2;
+  riskDeck=shuffle(RISK_CARDS); ledgerDeck=shuffle(LEDGER_CARDS); propMgmtDeck=shuffle(PROP_MGMT_CARDS);
+  gameTransactions.push({desc:`${playerName} opens books with $1,500 cash investment.`,
+    entries:[{account:'Cash',debit:1500,credit:0},{account:'Common Stock',debit:0,credit:1500}],correct:true,pts:0,auto:true});
+  document.getElementById('setup-screen').hidden=true;
+  document.getElementById('game-screen').classList.add('active');
+  buildBoard(); renderScoreboard();
+  const roundLabel=maxRounds===1?'Round 1 of 1':'Round 1 of 2';
+  document.getElementById('round-badge').textContent=roundLabel;
+  updateStatus(`${playerName}'s turn. Roll the dice!`);
+}
+
+// BOARD
+function buildBoard(){
+  const board=document.getElementById('monopoly-board'); board.innerHTML='';
+  const gp={};
+  for(let i=0;i<=10;i++) gp[i]={row:11,col:i+1,side:'bottom'};
+  for(let i=11;i<=19;i++) gp[i]={row:11-(i-10),col:11,side:'right-col'};
+  for(let i=20;i<=30;i++) gp[i]={row:1,col:11-(i-20),side:'top'};
+  for(let i=31;i<=39;i++) gp[i]={row:i-29,col:1,side:'left-col'};
+  SPACES.forEach(sp=>{
+    const pos=gp[sp.id]; const el=document.createElement('div');
+    el.className=`space ${pos.side}${sp.group==='corner'?' corner':''}`;
+    el.id=`space-${sp.id}`; el.style.gridRow=pos.row; el.style.gridColumn=pos.col;
+    el.setAttribute('aria-label',sp.name);
+    let inner='';
+    if(sp.color&&STRIP[sp.color]) inner+=`<div class="color-dot ${STRIP[sp.color]}" aria-hidden="true"></div>`;
+    inner+=`<span class="space-icon" aria-hidden="true">${sp.icon}</span>`;
+    inner+=`<span class="space-name">${sp.name}</span>`;
+    if(sp.price>0) inner+=`<span class="space-price">$${sp.price}</span>`;
+    el.innerHTML=inner; board.appendChild(el);
+  });
+  const center=document.createElement('div');
+  center.className='board-center'; center.style.gridRow='2/11'; center.style.gridColumn='2/11';
+  center.innerHTML=`<div class="center-title">Boardwalk<br>Books LLC</div><div class="center-sub">Crestwood Heights</div><div class="center-sub" style="color:var(--violet);font-weight:700;margin-top:4px;">Accounting Cycle Game</div>`;
+  board.appendChild(center); renderTokens();
+}
+
+function renderTokens(){
+  document.querySelectorAll('.token-p1,.token-cpu').forEach(t=>t.remove());
+  const pEl=document.getElementById(`space-${playerPos}`);
+  if(pEl){const t=document.createElement('span');t.className='token-p1';t.textContent='📒';t.setAttribute('aria-hidden','true');pEl.appendChild(t);}
+  const cEl=document.getElementById(`space-${cpuPos}`);
+  if(cEl){const t=document.createElement('span');t.className='token-cpu';t.textContent='🏢';t.setAttribute('aria-hidden','true');cEl.appendChild(t);}
+}
+
+function renderOwnership(){
+  Object.entries(ownership).forEach(([sid,owner])=>{
+    const el=document.getElementById(`space-${sid}`); if(!el)return;
+    el.classList.remove('owned-p1','owned-p2');
+    el.classList.add(owner==='player'?'owned-p1':'owned-p2');
+  });
+}
+
+function renderScoreboard(){
+  document.getElementById('scoreboard').innerHTML=`
+    <div class="score-card active-player">
+      <span class="sc-name">📒 ${playerName}</span>
+      <span class="sc-cash">$${playerCash.toLocaleString()}</span>
+      <span class="sc-turn">YOUR TURN</span>
+    </div>
+    <div class="score-card">
+      <span class="sc-name">🏢 City Properties Inc.</span>
+      <span class="sc-cash">$${cpuCash.toLocaleString()}</span>
+      <span class="sc-turn">Opponent</span>
+    </div>`;
+}
+
+function updateRoundBadge(){document.getElementById('round-badge').textContent=`Round ${Math.min(playerRoundCount+1,maxRounds)} of ${maxRounds}`;}
+
+// DICE
+const DIE_FACES=['⚀','⚁','⚂','⚃','⚄','⚅'];
+function rollDice(){
+  if(gameOver)return;
+  document.getElementById('roll-btn').disabled=true;
+  const d1=Math.floor(Math.random()*6)+1, d2=Math.floor(Math.random()*6)+1;
+  const e1=document.getElementById('die1'), e2=document.getElementById('die2');
+  e1.classList.add('rolling'); e2.classList.add('rolling');
+  setTimeout(()=>{
+    e1.textContent=DIE_FACES[d1-1]; e2.textContent=DIE_FACES[d2-1];
+    e1.classList.remove('rolling'); e2.classList.remove('rolling');
+    ann(`${playerName} rolled ${d1} and ${d2}. Total: ${d1+d2}.`);
+    movePlayer(d1+d2);
+  },550);
+}
+
+// PLAYER MOVEMENT
+function movePlayer(steps){
+  const oldPos=playerPos, newPos=(oldPos+steps)%40, passedGO=(oldPos+steps)>=40;
+  playerPos=newPos; renderTokens();
+  if(passedGO&&newPos!==0){
+    playerRoundCount++; updateRoundBadge();
+    showJE({type:'go',desc:`<strong>${playerName} passed Fiscal Year Start!</strong> Collect $200 service revenue.`,
+      correctEntries:[{account:'Cash',debit:200,credit:0},{account:'Service Revenue',debit:0,credit:200}],
+      onComplete:()=>{playerCash+=200;renderScoreboard();addToLog('Passed Fiscal Year Start: +$200');landOnSpace(newPos);}});
+  } else if(newPos===0){
+    playerRoundCount++; updateRoundBadge();
+    showJE({type:'go',desc:`<strong>${playerName} landed on Fiscal Year Start!</strong> Collect $200 service revenue.`,
+      correctEntries:[{account:'Cash',debit:200,credit:0},{account:'Service Revenue',debit:0,credit:200}],
+      onComplete:()=>{playerCash+=200;renderScoreboard();addToLog('Landed on Fiscal Year Start: +$200');endTurn();}});
+  } else { landOnSpace(newPos); }
+}
+
+function landOnSpace(pos){
+  const sp=SPACES[pos];
+  updateStatus(`${playerName} landed on ${sp.name}.`);
+  switch(sp.type){
+    case 'property': handleProperty(sp); break;
+    case 'propmgmt': handlePropMgmt(); break;
+    case 'utility':  handleUtility(sp);  break;
+    case 'tax':
+      showJE({type:'tax',desc:`<strong>Income Tax:</strong> ${playerName} must pay $100.`,
+        correctEntries:[{account:'Tax Expense',debit:100,credit:0},{account:'Cash',debit:0,credit:100}],
+        onComplete:()=>{playerCash-=100;renderScoreboard();addToLog('Tax: -$100');endTurn();}});break;
+    case 'luxtax':
+      showJE({type:'luxtax',desc:`<strong>Luxury Tax:</strong> ${playerName} must pay $75.`,
+        correctEntries:[{account:'Luxury Tax Expense',debit:75,credit:0},{account:'Cash',debit:0,credit:75}],
+        onComplete:()=>{playerCash-=75;renderScoreboard();addToLog('Luxury Tax: -$75');endTurn();}});break;
+    case 'risk': drawRiskCard(); break;
+    case 'ledger':     drawLedgerCard();     break;
+    case 'jail': case 'parking':
+      updateStatus(`${playerName} is at ${sp.name}. No transaction.`);setTimeout(endTurn,1200);break;
+    case 'gotojail':
+      playerPos=10; renderTokens(); updateStatus(`${playerName} is under IRS Audit!`);setTimeout(endTurn,1500);break;
+    default: endTurn();
+  }
+}
+
+function handleProperty(sp){
+  const owner=ownership[sp.id];
+  if(owner===undefined){
+    if(playerCash>=sp.price){
+      const forcedPurchase=(gameLevel===1||gameLevel===3);
+      if(forcedPurchase){
+        showJE({type:'buy',desc:`<strong>Purchase ${sp.name}:</strong> Record the purchase for $${sp.price} cash.`,
+          correctEntries:[{account:'Property Asset',debit:sp.price,credit:0},{account:'Cash',debit:0,credit:sp.price}],
+          onComplete:()=>{playerCash-=sp.price;ownership[sp.id]='player';renderOwnership();renderScoreboard();updatePropertiesList();addToLog(`Bought ${sp.name}: -$${sp.price}`);endTurn();}});
+      } else {
+        const dotColor=sp.color&&PROP_CSS[sp.color]?`var(${PROP_CSS[sp.color]})`:'#999';
+        document.getElementById('decision-title').innerHTML=`<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${dotColor};vertical-align:middle;margin-right:8px;"></span>Buy ${sp.name}?`;
+        document.getElementById('decision-desc').innerHTML=`<strong>${sp.name}</strong> available for <strong>$${sp.price}</strong>. You have $${playerCash.toLocaleString()}.`;
+        document.getElementById('decision-overlay').classList.add('active');
+      }
+    } else {updateStatus(`${playerName} can't afford ${sp.name}.`);setTimeout(endTurn,1500);}
+  } else if(owner==='player'){
+    updateStatus(`You own ${sp.name}. No transaction.`);setTimeout(endTurn,1200);
+  } else {
+    showJE({type:'rent-pay',desc:`<strong>${playerName} owes rent!</strong> ${sp.name} is owned by City Properties Inc. Pay $${sp.rent}.`,
+      correctEntries:[{account:'Rent Expense',debit:sp.rent,credit:0},{account:'Cash',debit:0,credit:sp.rent}],
+      onComplete:()=>{playerCash-=sp.rent;cpuCash+=sp.rent;renderScoreboard();addToLog(`Rent to CPI: -$${sp.rent}`);endTurn();}});
+  }
+}
+
+function handlePropMgmt(){
+  drawPropMgmtCard();
+}
+
+function drawPropMgmtCard(){
+  if(!propMgmtDeck.length) propMgmtDeck=fisherYates(PROP_MGMT_CARDS.slice());
+  pendingPropCard=propMgmtDeck.pop();
+  const card=pendingPropCard;
+  const d=document.getElementById('card-display'); d.className='card-drawn pm';
+  document.getElementById('card-tag').textContent=card.tag;
+  document.getElementById('card-title').textContent='Property Management';
+  document.getElementById('card-icon').textContent='📋';
+  document.getElementById('card-type').textContent='PROPERTY MANAGEMENT';
+  document.getElementById('card-text').textContent=card.text+(card.type==='pm-deferred'?` Receive $${card.amount}.`:` $${card.amount} due.`);
+  document.getElementById('card-overlay').classList.add('active');
+}
+
+function processPropMgmtCard(card){
+  document.getElementById('card-display').style.display='none';
+  if(card.type==='pm-ap'){
+    showJE({
+      type:'pm-ap',
+      desc:`<strong>${acctName(card.acct)}:</strong> ${card.text} Record the invoice for $${card.amount}.`,
+      correctEntries:[{account:card.acct,debit:card.amount,credit:0},{account:coaName(acctName('Accounts Payable')),debit:0,credit:card.amount}],
+      onComplete:()=>{addToLog(`${card.acct}: $${card.amount} (on account)`);endTurn();}
+    });
+  } else if(card.type==='pm-deferred'){
+    showJE({
+      type:'pm-deferred',
+      desc:`<strong>Cash received in advance:</strong> ${card.text} Record receipt of $${card.amount}.`,
+      correctEntries:[{account:'Cash',debit:card.amount,credit:0},{account:'Deferred Revenue',debit:0,credit:card.amount}],
+      onComplete:()=>{playerCash+=card.amount;renderScoreboard();addToLog(`Advance receipt: +$${card.amount}`);endTurn();}
+    });
+  }
+}
+
+function handleUtility(sp){
+  const owner=ownership[sp.id], amt=40;
+  if(owner===undefined){
+    if(playerCash>=sp.price){
+      const forcedPurchase=(gameLevel===1||gameLevel===3);
+      if(forcedPurchase){
+        showJE({type:'buy',desc:`<strong>Purchase ${sp.name}:</strong> Record the purchase for $${sp.price} cash.`,
+          correctEntries:[{account:'Property Asset',debit:sp.price,credit:0},{account:'Cash',debit:0,credit:sp.price}],
+          onComplete:()=>{playerCash-=sp.price;ownership[sp.id]='player';renderOwnership();renderScoreboard();updatePropertiesList();addToLog(`Bought ${sp.name}: -$${sp.price}`);endTurn();}});
+      } else {
+        document.getElementById('decision-title').innerHTML=`<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#777;vertical-align:middle;margin-right:8px;"></span>Buy ${sp.name}?`;
+        document.getElementById('decision-desc').innerHTML=`<strong>${sp.name}</strong> available for <strong>$${sp.price}</strong>.`;
+        document.getElementById('decision-overlay').classList.add('active');
+      }
+    } else {updateStatus(`Can't afford ${sp.name}.`);setTimeout(endTurn,1500);}
+  } else if(owner==='player'){
+    updateStatus(`You own ${sp.name}. No transaction.`);setTimeout(endTurn,1200);
+  } else {
+    showJE({type:'util',desc:`<strong>Utility bill:</strong> ${playerName} pays $${amt} for ${sp.name}.`,
+      correctEntries:[{account:'Utilities Expense',debit:amt,credit:0},{account:'Cash',debit:0,credit:amt}],
+      onComplete:()=>{playerCash-=amt;cpuCash+=amt;renderScoreboard();addToLog(`Utility: -$${amt}`);endTurn();}});
+  }
+}
+
+function buyProperty(){
+  document.getElementById('decision-overlay').classList.remove('active');
+  const sp=SPACES[playerPos];
+  showJE({type:'buy',desc:`<strong>Purchase ${sp.name}:</strong> Record the purchase for $${sp.price} cash.`,
+    correctEntries:[{account:'Property Asset',debit:sp.price,credit:0},{account:'Cash',debit:0,credit:sp.price}],
+    onComplete:()=>{playerCash-=sp.price;ownership[sp.id]='player';renderOwnership();renderScoreboard();updatePropertiesList();addToLog(`Bought ${sp.name}: -$${sp.price}`);endTurn();}});
+}
+function passProperty(){if(gameLevel===1||gameLevel===3){return;}document.getElementById('decision-overlay').classList.remove('active');updateStatus(`${playerName} passed.`);endTurn();}
+
+// CARDS
+let pendingCard=null;
+let pendingPropCard=null;
+function drawRiskCard(){
+  if(!riskDeck.length) riskDeck=shuffle(RISK_CARDS);
+  pendingCard=riskDeck.pop();
+  const d=document.getElementById('card-display'); d.className='card-drawn';
+  document.getElementById('card-tag').textContent='Risk Card';
+  document.getElementById('card-title').textContent='Risk Card';
+  document.getElementById('card-icon').textContent='🎲';
+  document.getElementById('card-type').textContent='RISK CARD';
+  document.getElementById('card-text').textContent=pendingCard.text;
+  document.getElementById('card-overlay').classList.add('active');
+}
+function drawLedgerCard(){
+  if(!ledgerDeck.length) ledgerDeck=shuffle(LEDGER_CARDS);
+  pendingCard=ledgerDeck.pop();
+  const d=document.getElementById('card-display'); d.className='card-drawn cc';
+  document.getElementById('card-tag').textContent='Ledger Card';
+  document.getElementById('card-title').textContent='Ledger Card';
+  document.getElementById('card-icon').textContent='📒';
+  document.getElementById('card-type').textContent='LEDGER CARD';
+  document.getElementById('card-text').textContent=pendingCard.text;
+  document.getElementById('card-overlay').classList.add('active');
+}
+function acknowledgeCard(){
+  document.getElementById('card-overlay').classList.remove('active');
+  // If this was a Property Management card, route to its handler
+  if(pendingPropCard){const c=pendingPropCard;pendingPropCard=null;processPropMgmtCard(c);return;}
+  const card=pendingCard; let entries=[], cashChange=0, cardDesc=null;
+  switch(card.type){
+    case 'revenue':
+      entries=[{account:'Cash',debit:card.amount,credit:0},{account:'Service Revenue',debit:0,credit:card.amount}]; cashChange=card.amount; break;
+    case 'rental-revenue': // FIX 1
+      entries=[{account:'Cash',debit:card.amount,credit:0},{account:'Rental Revenue',debit:0,credit:card.amount}]; cashChange=card.amount; break;
+    case 'expense':
+      entries=[{account:card.acct,debit:card.amount,credit:0},{account:'Cash',debit:0,credit:card.amount}]; cashChange=-card.amount; break;
+    case 'loan':
+      entries=[{account:'Cash',debit:card.amount,credit:0},{account:'Notes Payable',debit:0,credit:card.amount}]; cashChange=card.amount; break;
+    case 'deferred':
+      entries=[{account:'Cash',debit:card.amount,credit:0},{account:'Deferred Revenue',debit:0,credit:card.amount}]; cashChange=card.amount; break;
+    case 'equity':
+      entries=[{account:'Cash',debit:card.amount,credit:0},{account:'Common Stock',debit:0,credit:card.amount}]; cashChange=card.amount; break;
+    case 'dividend':
+      entries=[{account:'Dividends',debit:card.amount,credit:0},{account:'Cash',debit:0,credit:card.amount}]; cashChange=-card.amount; break;
+    case 'supplies-credit': // FIX 2: Dr. Supplies (asset) / Cr. AP
+      entries=[{account:'Supplies',debit:card.amount,credit:0},{account:'Accounts Payable',debit:0,credit:card.amount}];
+      cashChange=0; suppliesOnBooks=true; break;
+    case 'ar-collect':{
+      // Guard: only collect AR if there is an actual AR balance to collect
+      const arLedger=buildLedger();
+      const arBal=arLedger['Accounts Receivable']?(arLedger['Accounts Receivable'].debit-arLedger['Accounts Receivable'].credit):0;
+      if(arBal<=0){
+        // No AR balance - convert to service revenue cash collection instead
+        entries=[{account:'Cash',debit:card.amount,credit:0},{account:'Service Revenue',debit:0,credit:card.amount}];
+        cardDesc='<strong>Card drawn:</strong> No outstanding receivables on file. Collected $'+card.amount+' cash for services rendered.';
+      } else {
+        entries=[{account:'Cash',debit:card.amount,credit:0},{account:acctName('Accounts Receivable'),debit:0,credit:card.amount}];
+      }
+      cashChange=card.amount; break;}
+  }
+  showJE({type:'card',desc:cardDesc||`<strong>Card drawn:</strong> ${card.text}`,correctEntries:entries,
+    onComplete:()=>{playerCash+=cashChange;renderScoreboard();addToLog(`Card: ${cashChange>=0?'+':''}$${cashChange}`);endTurn();}});
+}
+
+// JE MODAL (account + increase/decrease, order-independent, no dollar amount)
+const JE_MAX=2;
+let jeConfig=null;
+function showJE(config){
+  jeConfig=config;
+  jeCorrectEntries=config.correctEntries; jeOnComplete=config.onComplete; jeCurrentAttempt=0;
+  document.getElementById('je-desc').innerHTML=config.desc;
+  document.getElementById('je-attempt-note').textContent=`Attempt 1 of ${JE_MAX}`;
+  const tbody=document.getElementById('je-tbody'); tbody.innerHTML='';
+  const row1=document.createElement('tr');
+  row1.innerHTML=`<td>${acctSelectHTML('je-acct-1','Account 1')}</td><td>${changeSelectHTML('je-dir-1','Account 1: increase or decrease')}</td>`;
+  tbody.appendChild(row1);
+  const row2=document.createElement('tr');
+  row2.innerHTML=`<td>${acctSelectHTML('je-acct-2','Account 2')}</td><td>${changeSelectHTML('je-dir-2','Account 2: increase or decrease')}</td>`;
+  tbody.appendChild(row2);
+  const fb=document.getElementById('je-feedback'); fb.className='je-feedback'; fb.textContent='';
+  document.getElementById('je-submit-btn').style.display='block';
+  const contBtn=document.getElementById('je-continue-btn');
+  contBtn.style.display='none';
+  contBtn.className='modal-btn success';
+  contBtn.textContent='Continue \u2192';
+  document.getElementById('je-overlay').classList.add('active');
+  setTimeout(()=>document.getElementById('je-acct-1')?.focus(),300);
+}
+
+function submitJE(){
+  jeCurrentAttempt++;
+  const acct1=document.getElementById('je-acct-1').value, dir1=document.getElementById('je-dir-1').value;
+  const acct2=document.getElementById('je-acct-2').value, dir2=document.getElementById('je-dir-2').value;
+  const fb=document.getElementById('je-feedback');
+  if(!acct1||!dir1||!acct2||!dir2){fb.className='je-feedback wrong show';fb.textContent='Please select both accounts and choose increase or decrease for each.';jeCurrentAttempt--;return;}
+  if(acct1===acct2){fb.className='je-feedback wrong show';fb.textContent='Choose two different accounts, this transaction affects two separate accounts.';jeCurrentAttempt--;return;}
+  const expected=jeCorrectEntries.map(e=>({account:e.account,change:expectedChange(e)}));
+  const student=[{account:acct1,change:dir1},{account:acct2,change:dir2}];
+  const matchAB=student[0].account===expected[0].account&&student[0].change===expected[0].change&&student[1].account===expected[1].account&&student[1].change===expected[1].change;
+  const matchBA=student[0].account===expected[1].account&&student[0].change===expected[1].change&&student[1].account===expected[0].account&&student[1].change===expected[0].change;
+  const ok=matchAB||matchBA;
+  const describe=()=>expected.map(e=>`${acctName(e.account)} ${e.change==='increase'?'increases':'decreases'}`).join(' and ');
+  if(ok){
+    const ptsFirst=jeConfig.ptsFirst||2, ptsSecond=jeConfig.ptsSecond||1;
+    const pts=jeCurrentAttempt===1?ptsFirst:ptsSecond;
+    fb.className='je-feedback correct show';
+    fb.innerHTML=`<strong>Correct!</strong> ${describe()}. (+${pts} pts)`;
+    if(!jeConfig.skipLedger){
+      cycleScores.je+=pts;
+      gameTransactions.push({desc:document.getElementById('je-desc').textContent,entries:jeCorrectEntries,correct:true,pts});
+    }
+    if(jeConfig.onScore) jeConfig.onScore(pts);
+    document.getElementById('je-submit-btn').style.display='none';
+    const contBtn=document.getElementById('je-continue-btn');
+    contBtn.className='modal-btn success';
+    contBtn.textContent='Correct, Continue \u2192';
+    contBtn.style.display='block';
+    contBtn.focus();
+  } else {
+    document.getElementById('je-attempt-note').textContent=`Attempt ${jeCurrentAttempt} of ${JE_MAX}`;
+    if(jeCurrentAttempt>=JE_MAX){
+      fb.className='je-feedback hint show';
+      fb.innerHTML=`<strong>Correct entry:</strong> ${describe()}.`;
+      if(!jeConfig.skipLedger){
+        gameTransactions.push({desc:document.getElementById('je-desc').textContent,entries:jeCorrectEntries,correct:false,pts:0});
+      }
+      if(jeConfig.onScore) jeConfig.onScore(0);
+      document.getElementById('je-submit-btn').style.display='none';
+      const contBtn=document.getElementById('je-continue-btn');
+      contBtn.className='modal-btn reveal';
+      contBtn.textContent='Not Correct, Continue \u2192';
+      contBtn.style.display='block';
+      contBtn.focus();
+    } else {
+      fb.className='je-feedback wrong show';
+      fb.innerHTML=`<strong>Not quite.</strong> Check which two accounts are affected and whether each one increases or decreases. You have ${JE_MAX-jeCurrentAttempt} attempt(s) remaining.`;
+    }
+  }
+}
+function continueAfterJE(){document.getElementById('je-overlay').classList.remove('active');if(jeOnComplete)jeOnComplete();}
+
+// TURN MANAGEMENT
+function endTurn(){
+  if(playerRoundCount>=maxRounds&&cpuRoundCount>=maxRounds){startCycle();return;}
+  runCPUTurn();
+}
+
+// CPU PLAYER
+function cpuRoll(){
+  const playerSpaces=Object.entries(ownership).filter(([,o])=>o==='player').map(([s])=>parseInt(s));
+  if(playerSpaces.length>0&&Math.random()<0.65){
+    const target=playerSpaces[Math.floor(Math.random()*playerSpaces.length)];
+    let dist=(target-cpuPos+40)%40;
+    if(dist>=2&&dist<=12) return dist;
+  }
+  return Math.floor(Math.random()*6)+1+Math.floor(Math.random()*6)+1;
+}
+
+function showCPUNotify(text){
+  return new Promise(resolve=>{
+    const modal=document.getElementById('cpu-modal');
+    document.getElementById('cpu-modal-text').textContent=text;
+    modal.classList.remove('hidden');
+    // Store resolve so close button can call it
+    window._cpuModalResolve=resolve;
+    // Focus the close button for keyboard/screen reader users
+    setTimeout(()=>document.getElementById('cpu-modal-close-btn')?.focus(),50);
+  });
+}
+function closeCPUModal(){
+  document.getElementById('cpu-modal').classList.add('hidden');
+  if(window._cpuModalResolve){window._cpuModalResolve();window._cpuModalResolve=null;}
+}
+
+async function runCPUTurn(){
+  if(cpuRoundCount>=maxRounds){
+    document.getElementById('roll-btn').disabled=false;
+    updateStatus(`${playerName}'s turn. Roll the dice!`);
+    return;
+  }
+  await showCPUNotify('City Properties Inc. is taking their turn...');
+  const steps=cpuRoll();
+  const oldPos=cpuPos, newPos=(oldPos+steps)%40, passedGO=(oldPos+steps)>=40;
+  cpuPos=newPos; renderTokens();
+  if(passedGO){cpuRoundCount++;cpuCash+=200;renderScoreboard();await showCPUNotify(`City Properties Inc. passed GO and collected $200.`);}
+  await processCPUSpace(SPACES[newPos]);
+}
+
+async function processCPUSpace(sp){
+  const owner=ownership[sp.id];
+  if(sp.type==='property'||sp.type==='utility'){
+    if(owner===undefined){
+      if(cpuCash>=sp.price){
+        ownership[sp.id]='cpu'; cpuCash-=sp.price;
+        renderOwnership(); renderScoreboard(); addToLog(`🏢 CPI bought ${sp.name}`);
+        await showCPUNotify(`City Properties Inc. purchased ${sp.name} for $${sp.price}.`);
+      } else {
+        await showCPUNotify(`City Properties Inc. landed on ${sp.name} but can't afford it ($${cpuCash} available).`);
+      }
+    } else if(owner==='player'){
+      cpuCash-=sp.rent; renderScoreboard();
+      await showCPUNotify(`City Properties Inc. landed on YOUR ${sp.name}! They owe you $${sp.rent} rent. Record the transaction.`);
+      showJE({type:'rent-recv',
+        desc:`<strong>City Properties Inc. landed on ${sp.name}!</strong> They owe you $${sp.rent} rent. Record the cash received and rental revenue.`,
+        correctEntries:[{account:'Cash',debit:sp.rent,credit:0},{account:'Rental Revenue',debit:0,credit:sp.rent}],
+        onComplete:()=>{playerCash+=sp.rent;renderScoreboard();addToLog(`Rent from CPI: +$${sp.rent}`);afterCPUTurn();}});
+      return;
+    } else {
+      await showCPUNotify(`City Properties Inc. landed on their own ${sp.name}.`);
+    }
+  } else if(sp.type==='tax'){cpuCash-=100;renderScoreboard();await showCPUNotify(`City Properties Inc. paid $100 in taxes.`);}
+  else if(sp.type==='luxtax'){cpuCash-=75;renderScoreboard();await showCPUNotify(`City Properties Inc. paid $75 luxury tax.`);}
+  else if(sp.type==='gotojail'){cpuPos=10;renderTokens();await showCPUNotify(`City Properties Inc. is under IRS Audit!`);}
+  else if(sp.type==='go'){cpuCash+=200;cpuRoundCount++;renderScoreboard();await showCPUNotify(`City Properties Inc. landed on GO. Collected $200.`);}
+  else if(sp.type==='chance'||sp.type==='cc'){await showCPUNotify(`City Properties Inc. drew a ${sp.type==='risk'?'Risk':'Ledger'} card.`);}
+  else {await showCPUNotify(`City Properties Inc. landed on ${sp.name}.`);}
+  afterCPUTurn();
+}
+
+function afterCPUTurn(){
+  if(playerRoundCount>=maxRounds&&cpuRoundCount>=maxRounds){startCycle();return;}
+  document.getElementById('roll-btn').disabled=false;
+  updateStatus(`${playerName}'s turn. Roll the dice!`);
+  renderScoreboard();
+}
+
+// UI HELPERS
+function updateStatus(msg){document.getElementById('status-msg').textContent=msg;}
+function addToLog(msg){
+  const log=document.getElementById('transaction-log');
+  if(log.querySelector('p'))log.innerHTML='';
+  const e=document.createElement('div'); e.className='log-entry';
+  e.innerHTML=`<span class="log-amt">${msg}</span>`;
+  log.insertBefore(e,log.firstChild);
+  if(log.children.length>16)log.removeChild(log.lastChild);
+}
+function updatePropertiesList(){
+  const list=document.getElementById('properties-list');
+  const mine=Object.entries(ownership).filter(([,o])=>o==='player').map(([sid])=>SPACES[parseInt(sid)]);
+  if(!mine.length){list.innerHTML='<p style="color:#595959;font-size:.875rem;">No properties yet.</p>';return;}
+  list.innerHTML=mine.map(sp=>`<div class="property-item"><div class="prop-dot" style="background:var(${PROP_CSS[sp.color]||'--prop-rr'})"></div><span style="font-size:.875rem;">${sp.name} ($${sp.rent}/turn)</span></div>`).join('');
+}
+function ann(msg){const el=document.getElementById('sr-announce');el.textContent='';requestAnimationFrame(()=>{el.textContent=msg;});}
+
+// ACCOUNTING CYCLE
+function startCycle(){
+  gameOver=true;
+  document.getElementById('roll-btn').disabled=true;
+  document.getElementById('game-screen').classList.remove('active');
+  document.getElementById('cycle-screen').classList.add('active');
+  const playerProps=Object.entries(ownership).filter(([,o])=>o==='player').length;
+  adjDepreciation=playerProps*50;
+  const ledger=buildLedger();
+  const suppliesBal=Math.abs(getBal('Supplies',ledger));
+  // FIX 3: 70% of supplies balance consumed
+  adjSuppliesUsed=suppliesBal>0?Math.round(suppliesBal*0.70):0;
+  cycleScores.je=Math.min(cycleScores.je,30);
+  currentCyclePhase=1; buildPips(); renderPhase(1);
+}
+
+const PHASE_NAMES=['Record Transactions','Adjusting Entries','Sort to Statements','Financial Statements','Closing Summary'];
+const TOTAL_PHASES=5;
+function buildPips(){
+  const nav=document.getElementById('phase-pips-nav'); nav.innerHTML='';
+  for(let i=1;i<=TOTAL_PHASES;i++){
+    const pip=document.createElement('div'); pip.className='pip '+(i===1?'active':'locked');
+    pip.id=`pip-${i}`; pip.textContent=i; pip.setAttribute('aria-label',`Phase ${i}: ${PHASE_NAMES[i-1]}`);
+    nav.appendChild(pip);
+    if(i<TOTAL_PHASES){const line=document.createElement('div');line.className='pip-line';line.id=`pip-line-${i}`;nav.appendChild(line);}
+  }
+}
+function updatePips(active){
+  for(let i=1;i<=TOTAL_PHASES;i++){
+    const pip=document.getElementById(`pip-${i}`); if(!pip)return;
+    if(i<active){pip.className='pip complete';pip.onclick=()=>goBackTo(i);pip.setAttribute('role','button');pip.setAttribute('tabindex','0');}
+    else if(i===active){pip.className='pip active';pip.removeAttribute('role');pip.removeAttribute('tabindex');pip.onclick=null;}
+    else{pip.className='pip locked';pip.removeAttribute('role');pip.removeAttribute('tabindex');pip.onclick=null;}
+    if(i<TOTAL_PHASES){const l=document.getElementById(`pip-line-${i}`);if(l)l.className='pip-line'+(i<active?' lit':'');}
+  }
+}
+function goBackTo(n){currentCyclePhase=n;renderPhase(n);}
+// Saved input data per phase for pip navigation
+const savedPhaseInputs={};
+
+function saveCurrentPhaseInputs(){
+  const main=document.getElementById('cycle-main');
+  if(!main)return;
+  const inputs=main.querySelectorAll('input,select');
+  const data={};
+  inputs.forEach(el=>{if(el.id)data[el.id]=el.value;});
+  savedPhaseInputs[currentCyclePhase]=data;
+}
+
+function restorePhaseInputs(phase){
+  const data=savedPhaseInputs[phase];
+  if(!data)return;
+  Object.entries(data).forEach(([id,val])=>{
+    const el=document.getElementById(id);
+    if(el&&!el.disabled)el.value=val;
+  });
+}
+
+function renderPhase(phase){
+  saveCurrentPhaseInputs(); // save before wiping
+  updatePips(phase); document.getElementById('cycle-main').innerHTML=''; window.scrollTo({top:0,behavior:'smooth'});
+  switch(phase){case 1:p1();break;case 2:p2();break;case 3:p3();break;case 4:p4();break;case 5:p5();break;}
+  restorePhaseInputs(phase); // restore after rendering
+}
+
+// LEDGER
+function buildLedger(){
+  const ledger={};
+  gameTransactions.forEach(tx=>{tx.entries.forEach(e=>{if(!ledger[e.account])ledger[e.account]={debit:0,credit:0};ledger[e.account].debit+=e.debit;ledger[e.account].credit+=e.credit;});});
+  return ledger;
+}
+function getBal(acct,ledger){const e=ledger[acct]||{debit:0,credit:0};return DEBIT_NORMAL.has(acct)?e.debit-e.credit:e.credit-e.debit;}
+function getSortedAccounts(ledger){return sortByCOA(Object.keys(ledger));}
+
+function buildTxTable(){
+  const txns=gameTransactions;
+  const rows=txns.map((tx,i)=>{
+    const parts=tx.entries.map(e=>`${acctName(e.account)} <em style="color:#666;">(${expectedChange(e)==='increase'?'Increase':'Decrease'})</em>`);
+    return `<tr><td>${i+1}</td><td style="font-size:.875rem;">${tx.desc}</td><td>${parts.join('<br>')}</td></tr>`;
+  }).join('');
+  return`<table class="ledger-table" aria-label="Recorded transactions"><thead><tr><th>#</th><th>Description</th><th>Accounts affected</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+function viewerToggle(panelId,btnId,openLabel,closeLabel){
+  const panel=document.getElementById(panelId),btn=document.getElementById(btnId); if(!panel||!btn)return;
+  const open=panel.classList.toggle('open'); btn.setAttribute('aria-expanded',open); btn.textContent=open?closeLabel:openLabel;
+}
+
+// PHASE 1: Review recorded transactions
+function p1(){
+  vaultAnswers[1]=gameTransactions.length;
+  document.getElementById('cycle-main').innerHTML=`<div class="phase-card"><div class="phase-card-header"><div><h2>Phase 1: Recorded Transactions</h2></div><div class="phase-num-badge">1</div></div><div class="phase-card-body"><div class="phase-note"><strong>Review:</strong> Every transaction you recorded during your rounds. Each row shows the two accounts affected and whether each one increased or decreased.</div>${buildTxTable()}${buildCheck(1,'How many separate transactions are listed above? (Count numbered rows only.)')}</div></div>`;
+  buildBar(1);
+}
+
+// PHASE 2: Adjusting entries, same account + increase/decrease card style as Phase 1
+function p2(){
+  const propCount=Object.entries(ownership).filter(([,o])=>o==='player').length;
+  adjDepreciation=propCount*50;
+  savedAdjEntries=[{debit:'Depreciation Expense',credit:'Accumulated Depreciation',amount:adjDepreciation,label:'Depreciation ($50 x '+propCount+' '+(propCount===1?'property':'properties')+')'}];
+  if(adjSuppliesUsed>0) savedAdjEntries.push({debit:'Supplies Expense',credit:'Supplies',amount:adjSuppliesUsed,label:'Supplies used (70% of Supplies balance)'});
+  vaultAnswers[2]=adjDepreciation;
+  const needsSupplies=adjSuppliesUsed>0;
+  document.getElementById('cycle-main').innerHTML=`<div class="phase-card">
+    <div class="phase-card-header"><div><h2>Phase 2: Adjusting Entries</h2></div><div class="phase-num-badge">2</div></div>
+    <div class="phase-card-body">
+      <div class="phase-note"><strong>Depreciation:</strong> Depreciation is recorded at $50 per property you own. You currently own <strong>${propCount}</strong> ${propCount===1?'property':'properties'}. Use that to figure out both the accounts affected and, later, the dollar amount.</div>
+      <div class="closing-block" id="adj-card-1">
+        <span class="closing-title">Adjusting Entry 1: Depreciation</span>
+        <p class="closing-hint">Which two accounts are affected, and does each one increase or decrease?</p>
+        <button class="modal-btn primary" id="adj-card-1-btn" onclick="startAdjCard(1)">Record This Entry</button>
+        <div class="je-feedback" id="adj-card-1-result" aria-live="polite" aria-atomic="true"></div>
+      </div>
+      ${needsSupplies?`<div class="closing-block" id="adj-card-2" style="display:none;">
+        <span class="closing-title">Adjusting Entry 2: Supplies Used</span>
+        <p class="closing-hint">You purchased supplies on account during the game. About 70% were consumed this period ($${adjSuppliesUsed}). Which two accounts are affected, and does each one increase or decrease?</p>
+        <button class="modal-btn primary" id="adj-card-2-btn" onclick="startAdjCard(2)">Record This Entry</button>
+        <div class="je-feedback" id="adj-card-2-result" aria-live="polite" aria-atomic="true"></div>
+      </div>`:''}
+      <div id="adj-calc-check" style="display:none;">${buildCheck(2,'What is the dollar amount of the depreciation adjusting entry? (Whole dollar amount.)')}</div>
+    </div>
+  </div>`;
+  buildBar(2);
+}
+function startAdjCard(n){
+  const entry=savedAdjEntries[n-1];
+  showJE({
+    type:'adjustment',
+    skipLedger:true,
+    ptsFirst:5, ptsSecond:3,
+    desc:`<strong>${entry.label}:</strong> Record this adjusting entry.`,
+    correctEntries:[{account:entry.debit,debit:entry.amount,credit:0},{account:entry.credit,debit:0,credit:entry.amount}],
+    onScore:(pts)=>{cycleScores.adjCards=(cycleScores.adjCards||0)+pts;window._lastAdjCorrect=pts>0;},
+    onComplete:()=>finishAdjCard(n)
+  });
+}
+function finishAdjCard(n){
+  const result=document.getElementById(`adj-card-${n}-result`);
+  const btn=document.getElementById(`adj-card-${n}-btn`);
+  const wasCorrect=!!window._lastAdjCorrect;
+  if(result){
+    result.className=wasCorrect?'je-feedback correct show':'je-feedback hint show';
+    result.textContent=wasCorrect?'Entry recorded correctly. You can move to the next step.':'Entry recorded with the correct answer shown above. You can move to the next step.';
+  }
+  if(btn) btn.disabled=true;
+  const nextCard=n===1?document.getElementById('adj-card-2'):null;
+  if(nextCard){nextCard.style.display='block';nextCard.scrollIntoView({behavior:'smooth',block:'center'});}
+  else{const calc=document.getElementById('adj-calc-check');if(calc){calc.style.display='block';calc.scrollIntoView({behavior:'smooth',block:'center'});}}
+}
+
+// PHASE 3: Sort ending balances to the statement they belong on
+function p3(){
+  const ledger=buildLedger();
+  savedAdjEntries.forEach(adj=>{if(!ledger[adj.debit])ledger[adj.debit]={debit:0,credit:0};ledger[adj.debit].debit+=adj.amount;if(!ledger[adj.credit])ledger[adj.credit]={debit:0,credit:0};ledger[adj.credit].credit+=adj.amount;});
+  window._p3Ledger=ledger;
+  let accounts=getSortedAccounts(ledger).filter(a=>Math.abs(getBal(a,ledger))>0.5&&a!=='Income Summary');
+  if(!accounts.includes('Retained Earnings')) accounts.push('Retained Earnings');
+  accounts=sortByCOA(accounts);
+  window._p3Accounts=accounts;
+  const rows=accounts.map((acct,i)=>`<tr id="p3-row-${i}">
+    <td style="color:var(--ink);">${acctName(acct)}</td>
+    <td style="text-align:right;color:var(--ink);">$${Math.abs(getBal(acct,ledger)).toLocaleString()}</td>
+    <td><select id="p3-dd-${i}" class="fs-dd" aria-label="${acctName(acct)}: which statement">
+      <option value="">-- Select Statement --</option>
+      <option value="IS">Income Statement</option>
+      <option value="RE">Statement of Retained Earnings</option>
+      <option value="BS">Balance Sheet</option>
+      <option value="EQBS">Statement of Equity and Balance Sheet</option>
+    </select></td>
+  </tr>`).join('');
+  document.getElementById('cycle-main').innerHTML=`<div class="phase-card">
+    <div class="phase-card-header"><div><h2>Phase 3: Sort Ending Balances to a Statement</h2></div><div class="phase-num-badge">3</div></div>
+    <div class="phase-card-body">
+      <div class="phase-note"><strong>Your task:</strong> Every account below has an ending balance after adjustments. For each one, choose which financial statement it belongs on, then click Check Classifications.</div>
+      <table class="tb-table" aria-label="Ending balances by statement">
+        <thead><tr><th>Account</th><th style="text-align:right;">Balance ($)</th><th>Statement</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div style="text-align:center;margin:18px 0 8px;"><button class="fs-submit-btn" onclick="checkClassifications()">Check Classifications</button></div>
+      <div class="je-feedback" id="p3-all-feedback" aria-live="polite" aria-atomic="true"></div>
+      <div style="text-align:center;margin:10px 0 0;" id="p3-next-wrap" hidden><button class="next-phase-btn" style="display:inline-block;" onclick="advanceTo(4)">Proceed to Phase 4: Financial Statements &rarr;</button></div>
+    </div>
+  </div>`;
+}
+function checkClassifications(){
+  const accounts=window._p3Accounts||[];
+  let correct=0;
+  accounts.forEach((acct,i)=>{
+    const sel=document.getElementById(`p3-dd-${i}`), row=document.getElementById(`p3-row-${i}`);
+    const val=sel?.value, expected=classificationFor(acct);
+    if(val&&val===expected){
+      correct++;
+      if(row){row.style.background='#e8f5e9';row.style.outline='2px solid var(--green)';}
+    } else if(row){
+      row.style.background='#fce4ec';row.style.outline='2px solid var(--red)';
+    }
+  });
+  const total=accounts.length;
+  const pct=total>0?correct/total:0;
+  const newScore=Math.round(pct*20);
+  if(newScore>=(cycleScores.classify||0)) cycleScores.classify=newScore;
+  const fb=document.getElementById('p3-all-feedback');
+  if(correct===total){
+    fb.className='je-feedback correct show'; fb.textContent=`All ${total} accounts classified correctly!`;
+  } else {
+    fb.className='je-feedback wrong show'; fb.textContent=`${correct} of ${total} correct. Rows in red need a different statement. Review and check again.`;
+  }
+  const nw=document.getElementById('p3-next-wrap'); if(nw) nw.hidden=false;
+}
+
+// PHASE 6: FINANCIAL STATEMENTS (dropdown rows)
+function p4(){
+  // Ledger reflects transactions plus adjusting entries
+  const ledger=(()=>{
+    const l=buildLedger();
+    savedAdjEntries.forEach(adj=>{if(!l[adj.debit])l[adj.debit]={debit:0,credit:0};l[adj.debit].debit+=adj.amount;if(!l[adj.credit])l[adj.credit]={debit:0,credit:0};l[adj.credit].credit+=adj.amount;});
+    return l;
+  })();
+
+  const REVS=['Rental Revenue','Service Revenue'];
+  const EXPS=['Advertising Expense','Depreciation Expense','Insurance Expense','Interest Expense','Legal Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
+  const ASSETS=['Cash','Accounts Receivable','Supplies','Prepaid Insurance','Property Asset','Accumulated Depreciation'];
+  const LIABS=['Accounts Payable','Notes Payable','Interest Payable','Deferred Revenue'];
+
+  // Dynamic IS rows: accounts that actually have a balance
+  const isAccounts=[...REVS,...EXPS].filter(a=>Math.abs(getBal(a,ledger))>0);
+  const isRowCount=isAccounts.length+1; // +1 extra blank
+
+  // RE accounts with balance
+  const divBal=Math.abs(getBal('Dividends',ledger));
+  const totalRev=REVS.reduce((s,a)=>s+Math.abs(getBal(a,ledger)),0);
+  const totalExp=EXPS.reduce((s,a)=>s+Math.abs(getBal(a,ledger)),0);
+  const netIncome=totalRev-totalExp;
+  vaultAnswers[4]=Math.round(netIncome);
+
+  // BS accounts with balance + always include Common Stock and Retained Earnings
+  const bsAccounts=[...ASSETS,...LIABS,'Common Stock','Retained Earnings'].filter(a=>Math.abs(getBal(a,ledger))>0||a==='Common Stock'||a==='Retained Earnings');
+  const bsRowCount=bsAccounts.length+1; // +1 extra blank
+
+  // Store correct data for checking
+  window._p6Ledger=ledger;
+  window._p6NetIncome=netIncome;
+  window._p6isAccounts=isAccounts;
+  window._p6bsAccounts=bsAccounts;
+  window._p6divBal=divBal;
+
+  // Build ending-balances viewer (carried over from Phase 3)
+  const endingAccts=window._p3Accounts||getSortedAccounts(ledger).filter(a=>Math.abs(getBal(a,ledger))>0.5&&a!=='Income Summary');
+  const atbViewHTML='<table class="ledger-table" aria-label="Ending balances"><thead><tr><th>Account</th><th style="text-align:right;">Balance ($)</th></tr></thead><tbody>'+
+    endingAccts.map(a=>`<tr><td style="color:var(--ink);">${acctName(a)}</td><td style="text-align:right;color:var(--ink);">$${Math.abs(getBal(a,ledger)).toLocaleString()}</td></tr>`).join('')+'</tbody></table>';
+
+  // Full COA dropdown for all rows
+  function fsDropdown(id, lbl){
+    let h=`<select class="fs-dd" id="${id}" aria-label="${lbl}"><option value="">-- Select Account --</option>`;
+    const grps={};
+    ACCOUNTS.forEach(a=>{if(a.group==='Closing')return;if(!grps[a.group])grps[a.group]=[];grps[a.group].push(a.name);});
+    Object.entries(grps).forEach(([g,ns])=>{h+=`<optgroup label="${g}">`;ns.forEach(n=>{
+      const displayName=acctName(n);
+      h+=`<option value="${n}">${displayName}</option>`;
+    });h+=`</optgroup>`;});
+    return h+'</select>';
+  }
+
+  // Build IS rows (dynamic)
+  let isRows='';
+  for(let i=0;i<isRowCount;i++){
+    isRows+=`<tr id="is-row-${i}">
+      <td>${fsDropdown(`is-dd-${i}`,'Income Statement account')}</td>
+      <td><input type="number" class="fs-stmt-amt" id="is-amt-${i}" min="0" placeholder="$" aria-label="Income Statement row ${i+1} amount"></td>
+    </tr>`;
+  }
+
+  // Build RE rows (fixed structure: Dividends as only dropdown, rest computed)
+  const reRows=`
+    <tr><td style="color:var(--ink);font-weight:700;">Beginning Retained Earnings</td><td style="color:var(--ink);text-align:right;">$0</td></tr>
+    <tr><td style="color:var(--ink);font-weight:700;">Add: Net Income <em style="font-size:.75rem;color:#555;">(from Income Statement)</em></td><td style="color:var(--ink);text-align:right;" id="re-ni-display">calculate IS first</td></tr>
+    <tr id="re-div-row">
+      <td>${fsDropdown('re-dd-0','RE statement account')}</td>
+      <td><input type="number" class="fs-stmt-amt" id="re-amt-0" min="0" placeholder="$" aria-label="RE dividends amount" oninput="updateREEnding()"></td>
+    </tr>
+    <tr><td style="color:var(--ink);font-weight:700;">Ending Retained Earnings</td><td style="color:var(--ink);text-align:right;" id="re-ending-display">--</td></tr>`;
+
+  // BS accounts split into two sections
+  // IFRS: non-current assets first (least liquid), GAAP: current assets first (most liquid)
+  const ASSETS_IFRS=['Property Asset','Accumulated Depreciation','Prepaid Insurance','Supplies','Accounts Receivable','Cash'];
+  const assetOrderList=accountingStandard==='ifrs'?ASSETS_IFRS:ASSETS;
+  const assetAccounts=assetOrderList.filter(a=>Math.abs(getBal(a,ledger))>0);
+  const liabEqAccounts=[...LIABS.filter(a=>Math.abs(getBal(a,ledger))>0),'Common Stock','Retained Earnings'];
+  const assetRowCount=assetAccounts.length;
+  const liabEqRowCount=liabEqAccounts.length;
+
+  // Store for checking
+  window._p6AssetAccounts=assetAccounts;
+  window._p6LiabEqAccounts=liabEqAccounts;
+
+  // Asset rows
+  let assetRows='';
+  for(let i=0;i<assetRowCount;i++){
+    assetRows+=`<tr id="bsa-row-${i}">
+      <td>${fsDropdown(`bsa-dd-${i}`,'Asset account')}</td>
+      <td><input type="number" class="fs-stmt-amt" id="bsa-amt-${i}" min="0" placeholder="$" aria-label="Asset row ${i+1} amount"></td>
+    </tr>`;
+  }
+
+  // Liability + Equity rows
+  let liabEqRows='';
+  for(let i=0;i<liabEqRowCount;i++){
+    liabEqRows+=`<tr id="bsle-row-${i}">
+      <td>${fsDropdown(`bsle-dd-${i}`,'Liability or Equity account')}</td>
+      <td><input type="number" class="fs-stmt-amt" id="bsle-amt-${i}" min="0" placeholder="$" aria-label="Liability/Equity row ${i+1} amount"></td>
+    </tr>`;
+  }
+
+  document.getElementById('cycle-main').innerHTML=`<div class="phase-card">
+    <div class="phase-card-header"><div><h2>Phase 4: Financial Statements</h2></div><div class="phase-num-badge">4</div></div>
+    <div class="phase-card-body">
+      <div class="phase-note"><strong>Your task:</strong> Use the dropdowns to select the correct account for each row on each financial statement. Then enter the dollar amount. When all three statements are complete, click <strong>Check All Statements</strong>.</div>
+
+      <button class="viewer-btn" id="p6-atb-btn" aria-expanded="false" onclick="viewerToggle('p6-atb-panel','p6-atb-btn','📋 View Ending Balances','📋 Hide Ending Balances')">📋 View Ending Balances</button>
+      <div class="viewer-panel" id="p6-atb-panel"><h4>Ending Balances (Phase 3)</h4>${atbViewHTML}</div>
+
+      <!-- INCOME STATEMENT -->
+      <div class="fs-stmt-block">
+        <div class="fs-stmt-title">${accountingStandard==='ifrs'?'Statement of Profit or Loss':'Income Statement'}</div>
+        <table class="fs-stmt-table" aria-label="Income Statement">
+          <thead><tr><th>Account</th><th style="text-align:right;">Amount ($)</th></tr></thead>
+          <tbody>${isRows}</tbody>
+          <tr class="fs-total-row"><td style="font-weight:700;">Net Income / (Net Loss)</td><td style="text-align:right;font-weight:700;" id="is-ni-computed">--</td></tr>
+        </table>
+        <button class="fs-calc-btn" onclick="computeIS()">Calculate Net Income</button>
+        <div class="je-feedback" id="is-calc-feedback" aria-live="polite" aria-atomic="true"></div>
+      </div>
+
+      <!-- STATEMENT OF RETAINED EARNINGS -->
+      <div class="fs-stmt-block">
+        <div class="fs-stmt-title">Statement of Retained Earnings</div>
+        <table class="fs-stmt-table" aria-label="Statement of Retained Earnings">
+          <thead><tr><th>Item</th><th style="text-align:right;">Amount ($)</th></tr></thead>
+          <tbody>${reRows}</tbody>
+        </table>
+      </div>
+
+      <!-- BALANCE SHEET: ASSETS -->
+      <div class="fs-stmt-block">
+        <div class="fs-stmt-title">${accountingStandard==='ifrs'?'Statement of Financial Position':'Balance Sheet'}</div>
+
+        <p style="font-family:'Bungee',cursive;font-size:.875rem;color:var(--violet);padding:8px 14px 4px;margin:0;background:#f0f2ff;border-bottom:1px solid #dde;">ASSETS</p>
+        <table class="fs-stmt-table" aria-label="Balance Sheet Assets">
+          <thead><tr><th>Account</th><th style="text-align:right;">Amount ($)</th></tr></thead>
+          <tbody>${assetRows}</tbody>
+          <tr class="fs-total-row">
+            <td style="font-weight:700;">Total Assets</td>
+            <td style="text-align:right;font-weight:700;" id="bs-total-assets">--</td>
+          </tr>
+        </table>
+
+        <p style="font-family:'Bungee',cursive;font-size:.875rem;color:var(--violet);padding:8px 14px 4px;margin:0;background:#f0f2ff;border-bottom:1px solid #dde;">LIABILITIES AND EQUITY</p>
+        <table class="fs-stmt-table" aria-label="Balance Sheet Liabilities and Equity">
+          <thead><tr><th>Account</th><th style="text-align:right;">Amount ($)</th></tr></thead>
+          <tbody>${liabEqRows}</tbody>
+          <tr class="fs-total-row">
+            <td style="font-weight:700;">Total Liabilities + Equity</td>
+            <td style="text-align:right;font-weight:700;" id="bs-total-le">--</td>
+          </tr>
+          <tr><td colspan="2" style="text-align:center;padding:8px;font-weight:700;" id="bs-balance-check"></td></tr>
+        </table>
+
+        <button class="fs-calc-btn" onclick="computeBS()">Calculate Balance Sheet Totals</button>
+        <div class="je-feedback" id="bs-calc-feedback" aria-live="polite" aria-atomic="true"></div>
+      </div>
+
+      <!-- CHECK ALL -->
+      <div style="text-align:center;margin:18px 0 8px;">
+        <button class="fs-submit-btn" onclick="checkAllStatements()">Check All Statements</button>
+      </div>
+      <div class="je-feedback" id="fs-all-feedback" aria-live="polite" aria-atomic="true"></div>
+      <div style="text-align:center;margin:10px 0 0;" id="fs-next-wrap" hidden>
+        <button class="next-phase-btn" style="display:inline-block;" onclick="advanceTo(5)">Proceed to Closing Summary &rarr;</button>
+      </div>
+
+      ${buildCheck(4,'What is Net Income on your Income Statement? (Whole dollar amount. If a net loss, enter 0.)')}
+    </div>
+  </div>`;
+  buildBar(4);
+}
+
+function computeIS(){
+  const ledger=window._p6Ledger;
+  const REVS=['Rental Revenue','Service Revenue'];
+  const EXPS=['Advertising Expense','Depreciation Expense','Insurance Expense','Interest Expense','Legal Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
+  // Read what student entered for revenues and expenses
+  let totalRev=0, totalExp=0;
+  const isRowCount=window._p6isAccounts.length+1;
+  for(let i=0;i<isRowCount;i++){
+    const acct=document.getElementById(`is-dd-${i}`)?.value;
+    const amt=parseFloat(document.getElementById(`is-amt-${i}`)?.value)||0;
+    if(!acct||amt===0)continue;
+    if(REVS.includes(acct)) totalRev+=amt;
+    if(EXPS.includes(acct)) totalExp+=amt;
+  }
+  const ni=totalRev-totalExp;
+  document.getElementById('is-ni-computed').textContent=ni>=0?`$${ni.toLocaleString()}`:`($${Math.abs(ni).toLocaleString()})`;
+  document.getElementById('re-ni-display').textContent=ni>=0?`$${ni.toLocaleString()}`:`($${Math.abs(ni).toLocaleString()})`;
+  window._p6ComputedNI=ni;
+  // Update RE ending
+  updateREEnding();
+  const fb=document.getElementById('is-calc-feedback');
+  fb.className='je-feedback correct show';
+  fb.textContent=`Net Income calculated: ${ni>=0?'$'+ni.toLocaleString():'($'+Math.abs(ni).toLocaleString()+')'}. This has been added to your Statement of Retained Earnings.`;
+}
+
+function updateREEnding(){
+  const ni=window._p6ComputedNI||0;
+  const divAmt=parseFloat(document.getElementById('re-amt-0')?.value)||0;
+  const endRE=ni-divAmt;
+  document.getElementById('re-ending-display').textContent=endRE>=0?`$${endRE.toLocaleString()}`:`($${Math.abs(endRE).toLocaleString()})`;
+  window._p6ComputedEndRE=endRE;
+}
+
+function computeBS(){
+  const ledger=window._p6Ledger;
+  const ASSETS=['Cash','Accounts Receivable','Supplies','Prepaid Insurance','Property Asset','Accumulated Depreciation'];
+  const LIABS=['Accounts Payable','Notes Payable','Interest Payable','Deferred Revenue'];
+  const EQ=['Common Stock','Retained Earnings'];
+  let totalAssets=0, totalLE=0;
+
+  // Read asset section rows
+  const assetRowCount=window._p6AssetAccounts.length;
+  for(let i=0;i<assetRowCount;i++){
+    const acct=document.getElementById(`bsa-dd-${i}`)?.value;
+    const amt=parseFloat(document.getElementById(`bsa-amt-${i}`)?.value)||0;
+    if(!acct||amt===0)continue;
+    if(acct==='Accumulated Depreciation') totalAssets-=amt;
+    else totalAssets+=amt;
+  }
+
+  // Read liab+equity section rows
+  const liabEqRowCount=window._p6LiabEqAccounts.length;
+  for(let i=0;i<liabEqRowCount;i++){
+    const acct=document.getElementById(`bsle-dd-${i}`)?.value;
+    const amt=parseFloat(document.getElementById(`bsle-amt-${i}`)?.value)||0;
+    if(!acct||amt===0)continue;
+    if(LIABS.includes(acct)||EQ.includes(acct)) totalLE+=amt;
+  }
+
+  document.getElementById('bs-total-assets').textContent=`$${totalAssets.toLocaleString()}`;
+  document.getElementById('bs-total-le').textContent=`$${totalLE.toLocaleString()}`;
+  window._p6ComputedAssets=totalAssets; window._p6ComputedLE=totalLE;
+  const balanced=Math.abs(totalAssets-totalLE)<1;
+  const chk=document.getElementById('bs-balance-check');
+  if(totalAssets>0||totalLE>0){
+    chk.style.color=balanced?'var(--green)':'var(--red)';
+    chk.textContent=balanced?'Balance Sheet is in balance!':'Balance Sheet does not balance. Check your accounts and amounts.';
+  }
+  const fb=document.getElementById('bs-calc-feedback');
+  fb.className=`je-feedback ${balanced?'correct':'wrong'} show`;
+  fb.textContent=balanced?`Total Assets: $${totalAssets.toLocaleString()} = Total Liabilities + Equity: $${totalLE.toLocaleString()}. In balance!`:`Total Assets ($${totalAssets.toLocaleString()}) do not equal Total Liabilities + Equity ($${totalLE.toLocaleString()}). Review your accounts.`;
+}
+
+function checkAllStatements(){
+  const ledger=window._p6Ledger;
+  const REVS=['Rental Revenue','Service Revenue'];
+  const EXPS=['Advertising Expense','Depreciation Expense','Insurance Expense','Interest Expense','Legal Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
+  const ASSETS=['Cash','Accounts Receivable','Supplies','Prepaid Insurance','Property Asset','Accumulated Depreciation'];
+  const LIABS=['Accounts Payable','Notes Payable','Interest Payable','Deferred Revenue'];
+  const isAccounts=window._p6isAccounts; // accounts that actually have balances
+  const bsAccounts=window._p6bsAccounts;
+  let correct=0, total=0;
+
+  // Check IS rows
+  const isRowCount=isAccounts.length+1;
+  // Build a set of what SHOULD be on IS with correct amounts
+  const isExpected={};
+  isAccounts.forEach(a=>isExpected[a]=Math.abs(getBal(a,ledger)));
+
+  // Track which expected accounts were found correctly
+  const isFound={};
+  for(let i=0;i<isRowCount;i++){
+    const acct=document.getElementById(`is-dd-${i}`)?.value;
+    const amt=parseFloat(document.getElementById(`is-amt-${i}`)?.value)||0;
+    const row=document.getElementById(`is-row-${i}`);
+    if(!acct&&amt===0){continue;} // empty extra row - skip
+    total++;
+    const expectedAmt=isExpected[acct];
+    const acctCorrect=[...REVS,...EXPS].includes(acct)&&isExpected.hasOwnProperty(acct);
+    const amtCorrect=expectedAmt!==undefined&&Math.abs(amt-expectedAmt)<1;
+    if(acctCorrect&&amtCorrect){
+      correct++; isFound[acct]=true;
+      if(row){row.style.background='#e8f5e9';row.style.outline='2px solid var(--green)';}
+    } else {
+      if(row){row.style.background='#fce4ec';row.style.outline='2px solid var(--red)';}
+    }
+  }
+
+  // Check RE: Dividends row
+  total++;
+  const reDDAct=document.getElementById('re-dd-0')?.value;
+  const reAmt=parseFloat(document.getElementById('re-amt-0')?.value)||0;
+  const divBal=window._p6divBal;
+  const reRow=document.getElementById('re-div-row');
+  if(reDDAct==='Dividends'&&Math.abs(reAmt-divBal)<1){
+    correct++;
+    if(reRow){reRow.style.background='#e8f5e9';reRow.style.outline='2px solid var(--green)';}
+  } else {
+    if(reRow){reRow.style.background='#fce4ec';reRow.style.outline='2px solid var(--red)';}
+  }
+
+  // Check BS asset rows
+  const assetAccounts=window._p6AssetAccounts;
+  const liabEqAccounts=window._p6LiabEqAccounts;
+  const bsExpected={};
+  // Use raw getBal so deficit RE (negative) is handled correctly
+  [...assetAccounts,...liabEqAccounts].forEach(a=>{
+    const bal=getBal(a,ledger);
+    // For Accumulated Depreciation (contra asset): store absolute value since student enters positive
+    bsExpected[a]=a==='Accumulated Depreciation'?Math.abs(bal):Math.abs(bal);
+    // Store sign separately for RE deficit check
+    bsExpected[a+'_sign']=bal>=0?1:-1;
+  });
+  // Retained Earnings on the Balance Sheet is the ENDING balance (Net Income minus Dividends),
+  // not the pre-closing ledger balance, which is still $0 until Phase 5 closes the books.
+  const endRE=window._p6NetIncome-window._p6divBal;
+  bsExpected['Retained Earnings']=Math.abs(endRE);
+  bsExpected['Retained Earnings_sign']=endRE>=0?1:-1;
+
+  // Asset section
+  for(let i=0;i<assetAccounts.length;i++){
+    const acct=document.getElementById(`bsa-dd-${i}`)?.value;
+    const amt=parseFloat(document.getElementById(`bsa-amt-${i}`)?.value)||0;
+    const row=document.getElementById(`bsa-row-${i}`);
+    if(!acct&&amt===0){continue;}
+    total++;
+    const expectedAmt=bsExpected[acct];
+    const acctCorrect=ASSETS.includes(acct)&&bsExpected.hasOwnProperty(acct);
+    const amtCorrect=expectedAmt!==undefined&&Math.abs(amt-expectedAmt)<1;
+    if(acctCorrect&&amtCorrect){
+      correct++;
+      if(row){row.style.background='#e8f5e9';row.style.outline='2px solid var(--green)';}
+    } else {
+      if(row){row.style.background='#fce4ec';row.style.outline='2px solid var(--red)';}
+    }
+  }
+
+  // Liabilities + Equity section
+  for(let i=0;i<liabEqAccounts.length;i++){
+    const acct=document.getElementById(`bsle-dd-${i}`)?.value;
+    const amt=parseFloat(document.getElementById(`bsle-amt-${i}`)?.value)||0;
+    const row=document.getElementById(`bsle-row-${i}`);
+    if(!acct&&amt===0){continue;}
+    total++;
+    const expectedAmt=bsExpected[acct];
+    const acctCorrect=[...LIABS,'Common Stock','Retained Earnings'].includes(acct)&&bsExpected.hasOwnProperty(acct);
+    const amtCorrect=expectedAmt!==undefined&&Math.abs(amt-expectedAmt)<1;
+    if(acctCorrect&&amtCorrect){
+      correct++;
+      if(row){row.style.background='#e8f5e9';row.style.outline='2px solid var(--green)';}
+    } else {
+      if(row){row.style.background='#fce4ec';row.style.outline='2px solid var(--red)';}
+    }
+  }
+
+  const pct=total>0?correct/total:0;
+  const newFS=Math.round(pct*20);
+  if(newFS>=(cycleScores.fs||0))cycleScores.fs=newFS;
+  const fb=document.getElementById('fs-all-feedback');
+  if(correct===total){
+    fb.className='je-feedback correct show';
+    fb.textContent=`All ${total} rows correct across all three statements!`;
+  } else {
+    fb.className='je-feedback wrong show';
+    fb.textContent=`${correct} of ${total} rows correct. Rows highlighted in red need correction. Check account selection and dollar amount.`;
+  }
+  const nw=document.getElementById('fs-next-wrap');
+  if(nw) nw.hidden=false;
+}
+
+
+// PHASE 5: Closing Summary (informational, not graded, closing happens automatically)
+function p5(){
+  const ledger=buildLedger();
+  savedAdjEntries.forEach(adj=>{if(!ledger[adj.debit])ledger[adj.debit]={debit:0,credit:0};ledger[adj.debit].debit+=adj.amount;if(!ledger[adj.credit])ledger[adj.credit]={debit:0,credit:0};ledger[adj.credit].credit+=adj.amount;});
+  const REVS=['Rental Revenue','Service Revenue'],EXPS=['Advertising Expense','Depreciation Expense','Insurance Expense','Interest Expense','Legal Expense','Luxury Tax Expense','Rent Expense','Repairs Expense','Supplies Expense','Tax Expense','Utilities Expense'];
+  const totalRev=REVS.reduce((s,a)=>s+Math.abs(getBal(a,ledger)),0);
+  const totalExp=EXPS.reduce((s,a)=>s+Math.abs(getBal(a,ledger)),0);
+  const netIncome=totalRev-totalExp, dividends=Math.abs(getBal('Dividends',ledger));
+  const endRE=netIncome-dividends;
+  const useIS=closingMethod==='is';
+  const fmt=n=>n>=0?`$${n.toLocaleString()}`:`($${Math.abs(n).toLocaleString()})`;
+
+  document.getElementById('cycle-main').innerHTML=`<div class="phase-card">
+    <div class="phase-card-header"><div><h2>Phase 5: Closing Summary</h2></div><div class="phase-num-badge">5</div></div>
+    <div class="phase-card-body">
+      <div class="phase-note"><strong>Closing entries</strong> reset the revenue, expense, and dividend accounts to zero so next period starts clean. They do not change the Net Income you already calculated, they only move it into Retained Earnings. Your course setup uses the <strong>${useIS?'Income Summary method':'direct to Retained Earnings method'}</strong>. The game applies that automatically below.</div>
+      <p class="fs-section-header" style="margin-top:12px;">Boardwalk Books LLC &mdash; Retained Earnings Roll Forward</p>
+      <table class="tb-table" aria-label="Retained earnings roll forward">
+        <tbody>
+          <tr><td style="color:var(--ink);">Beginning Retained Earnings</td><td style="text-align:right;color:var(--ink);">$0</td></tr>
+          <tr><td style="color:var(--ink);">Add: Net Income</td><td style="text-align:right;color:var(--ink);">${fmt(netIncome)}</td></tr>
+          <tr><td style="color:var(--ink);">Less: Dividends</td><td style="text-align:right;color:var(--ink);">$${dividends.toLocaleString()}</td></tr>
+          <tr class="total-row"><td style="color:white;">Ending Retained Earnings</td><td style="text-align:right;color:white;">${fmt(endRE)}</td></tr>
+        </tbody>
+      </table>
+      <div class="phase-note" style="margin-top:12px;"><strong>What just happened:</strong> Rental Revenue, Service Revenue, every expense account, and Dividends all reset to zero. Retained Earnings now carries ${fmt(endRE)} forward into next period's Beginning Retained Earnings.</div>
+
+      <div class="phase-note" style="margin-top:16px;background:#fff3e0;border-left-color:var(--orange);"><strong>Check your understanding:</strong> What happens to the books when the temporary accounts (revenue, expense, and dividends) are closed at the end of the period?</div>
+      <div role="radiogroup" aria-label="Closing entries comprehension question" id="p5-mc-group" style="margin:12px 0;">
+        ${buildP5MCOptions()}
+      </div>
+      <div style="text-align:center;"><button class="fs-submit-btn" id="p5-mc-submit" onclick="checkP5MC()" disabled>Check Answer</button></div>
+      <div class="je-feedback" id="p5-mc-feedback" aria-live="polite" aria-atomic="true"></div>
+
+      <div style="text-align:center;margin:18px 0 8px;" id="p5-next-wrap" hidden><button class="next-phase-btn" style="display:inline-block;" onclick="goToReflection()">Close the Books &rarr;</button></div>
+    </div>
+  </div>`;
+  window._p5MCSelected=null;
+  window._p5MCAttempt=0;
+}
+const P5_MC_CHOICES=[
+  {text:'Revenue, expense, and dividend balances reset to zero, and net income moves into Retained Earnings.',correct:true},
+  {text:'Revenue, expense, and dividend balances double in size to carry extra activity into next period.',correct:false},
+  {text:'Revenue, expense, and dividend accounts are deleted permanently from the chart of accounts.',correct:false},
+  {text:'Revenue, expense, and dividend balances carry over unchanged into the next accounting period.',correct:false},
+];
+function buildP5MCOptions(){
+  const shuffled=shuffle(P5_MC_CHOICES);
+  const letters=['a','b','c','d'];
+  window._p5MCCorrectLetter=null;
+  const html=shuffled.map((opt,i)=>{
+    const letter=letters[i];
+    if(opt.correct) window._p5MCCorrectLetter=letter;
+    return `<button type="button" class="mc-opt" id="p5-mc-${letter}" aria-pressed="false" onclick="selectP5MC('${letter}')">${opt.text}</button>`;
+  }).join('\n        ');
+  return html;
+}
+function selectP5MC(letter){
+  ['a','b','c','d'].forEach(l=>{
+    const btn=document.getElementById(`p5-mc-${l}`);
+    if(!btn||btn.disabled)return;
+    btn.className='mc-opt'+(l===letter?' selected':'');
+    btn.setAttribute('aria-pressed',l===letter?'true':'false');
+  });
+  window._p5MCSelected=letter;
+  document.getElementById('p5-mc-submit').disabled=false;
+}
+function checkP5MC(){
+  if(!window._p5MCSelected)return;
+  window._p5MCAttempt++;
+  const fb=document.getElementById('p5-mc-feedback');
+  const correctLetter=window._p5MCCorrectLetter;
+  const correct=window._p5MCSelected===correctLetter;
+  ['a','b','c','d'].forEach(l=>{const btn=document.getElementById(`p5-mc-${l}`);if(btn)btn.disabled=true;});
+  if(correct){
+    document.getElementById(`p5-mc-${correctLetter}`).className='mc-opt correct-final';
+    fb.className='je-feedback correct show';
+    fb.innerHTML='<strong>Correct!</strong> Closing entries zero out the temporary accounts and roll the net effect into Retained Earnings.';
+    document.getElementById('p5-mc-submit').style.display='none';
+    document.getElementById('p5-next-wrap').hidden=false;
+  } else if(window._p5MCAttempt>=2){
+    document.getElementById(`p5-mc-${window._p5MCSelected}`).className='mc-opt wrong-final';
+    document.getElementById(`p5-mc-${correctLetter}`).className='mc-opt correct-final';
+    fb.className='je-feedback hint show';
+    fb.innerHTML='<strong>Correct answer:</strong> Revenue, expense, and dividend balances reset to zero, and the net effect moves into Retained Earnings.';
+    document.getElementById('p5-mc-submit').style.display='none';
+    document.getElementById('p5-next-wrap').hidden=false;
+  } else {
+    document.getElementById(`p5-mc-${window._p5MCSelected}`).className='mc-opt wrong-final';
+    fb.className='je-feedback wrong show';
+    fb.textContent='Not quite. Think about what "temporary" accounts means for next period, and try again.';
+    // re-enable for second attempt
+    ['a','b','c','d'].forEach(l=>{const btn=document.getElementById(`p5-mc-${l}`);if(btn){btn.disabled=false;if(l!==window._p5MCSelected)btn.className='mc-opt';}});
+    window._p5MCSelected=null;
+    document.getElementById('p5-mc-submit').disabled=true;
+  }
+}
+
+
+// CHECK SYSTEM
+const MAX_ATT=5;
+function buildCheck(phase,q){return`<div class="check-section" id="check-${phase}"><div class="check-title">Phase ${phase} Check</div><div class="check-question">${q}</div><div class="check-input-row"><input type="number" class="check-input" id="v${phase}-input" placeholder="?" aria-label="Phase ${phase} answer" min="0"><button class="check-btn" id="v${phase}-btn" onclick="checkPhase(${phase})">Check</button></div><div class="check-feedback" id="v${phase}-feedback" aria-live="polite" aria-atomic="true"></div><div class="attempt-bar" id="v${phase}-bar"></div><div class="check-attempts" id="v${phase}-attempts"></div><button class="next-phase-btn" id="v${phase}-next" onclick="${phase<TOTAL_PHASES?'advanceTo('+(phase+1)+')':'goToReflection()'}">${phase<TOTAL_PHASES?'Proceed to Phase '+(phase+1)+': '+PHASE_NAMES[phase]+' &rarr;':'Close the Books &rarr;'}</button></div>`;}
+function buildBar(phase){const bar=document.getElementById(`v${phase}-bar`);if(!bar)return;bar.innerHTML='';for(let i=0;i<MAX_ATT;i++){const d=document.createElement('div');d.className='attempt-dot remaining';d.id=`v${phase}-dot-${i}`;bar.appendChild(d);}}
+function updateBar(phase,used){for(let i=0;i<MAX_ATT;i++){const d=document.getElementById(`v${phase}-dot-${i}`);if(d)d.className='attempt-dot '+(i<used?'used':'remaining');}}
+function checkPhase(phase){
+  if(!cycleVaultAttempts[phase])cycleVaultAttempts[phase]=0;
+  cycleVaultAttempts[phase]++;
+  const input=document.getElementById(`v${phase}-input`),fb=document.getElementById(`v${phase}-feedback`),nextBtn=document.getElementById(`v${phase}-next`),btn=document.getElementById(`v${phase}-btn`);
+  const att=cycleVaultAttempts[phase], raw=parseFloat(input?.value);
+  if(isNaN(raw)){fb.className='check-feedback wrong show';fb.textContent='Please enter a number.';cycleVaultAttempts[phase]--;return;}
+  updateBar(phase,att);
+  document.getElementById(`v${phase}-attempts`).textContent=`Attempt ${att} of ${MAX_ATT}`;
+  const correct=vaultAnswers[phase];
+  if(Math.abs(raw-correct)<1){
+    fb.className='check-feedback correct show';fb.innerHTML=`<strong>Correct!</strong> The answer is $${typeof correct==='number'?correct.toLocaleString():correct}.`;
+    if(input)input.disabled=true;if(btn)btn.disabled=true;
+    document.getElementById(`check-${phase}`)?.classList.add('unlocked');nextBtn?.classList.add('show');
+    const pts=att===1?10:att<=2?8:att<=3?6:att<=4?4:2;
+    scorePhase(phase,pts);
+  } else {
+    if(att>=MAX_ATT){
+      fb.className='check-feedback revealed show';fb.innerHTML=`<strong>Answer:</strong> The correct answer is <strong>$${correct.toLocaleString()}</strong>. Review the notes above and proceed.`;
+      if(input)input.disabled=true;if(btn)btn.disabled=true;nextBtn?.classList.add('show');scorePhase(phase,0);
+    } else {
+      fb.className='check-feedback wrong show';fb.innerHTML=`<strong>Not quite.</strong> ${getHint(phase,att)} You have ${MAX_ATT-att} attempt(s) remaining.`;
+    }
+  }
+}
+function scorePhase(phase,pts){
+  if(phase===2){if(pts>=(cycleScores.adj||0))cycleScores.adj=pts;}
+  else if(phase===4){if(pts>=(cycleScores.fs||0))cycleScores.fs=pts;}
+}
+function getHint(phase,att){
+  const pc=Object.entries(ownership).filter(([,o])=>o==='player').length;
+  const h={
+    1:['Count each numbered row in the table above.','Include every transaction from both rounds.','Each row represents one complete transaction.','Scroll up to recount if needed.'],
+    2:[`Depreciation is $50 per property you own. You own ${pc} ${pc===1?'property':'properties'}.`,`$50 x ${pc} = $${adjDepreciation}.`,'Multiply the number of properties you own by $50.','This is the amount Depreciation Expense increases by.'],
+    4:['Net Income = Total Revenues minus Total Expenses.','Add all revenue account balances, then subtract all expense account balances.','Use the accounts you classified as Income Statement items in Phase 3.','If expenses exceed revenues, Net Income will be negative (net loss).'],
+  };
+  const arr=h[phase]||['Review your work carefully.'];return arr[Math.min(att-1,arr.length-1)];
+}
+function advanceTo(phase){currentCyclePhase=phase;renderPhase(phase);}
+
+// REFLECTION GATE
+function goToReflection(){
+  cycleScores.completion=10;cycleScores.je=Math.min(Math.round(cycleScores.je),30);
+  finalScore=Math.min(Object.values(cycleScores).reduce((s,v)=>s+v,0),CYCLE_MAX_SCORE);
+  document.getElementById('cycle-screen').classList.remove('active');
+  document.getElementById('reflection-gate-screen').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  const ta=document.getElementById('gate-reflection'),charEl=document.getElementById('gate-char-count');
+  ta.addEventListener('input',()=>{const len=ta.value.length;charEl.textContent=`${len} / 40 characters minimum`;charEl.style.color=len>=40?'var(--green)':'#888';});
+}
+function submitReflection(){
+  const ta=document.getElementById('gate-reflection'),err=document.getElementById('gate-error');
+  reflectionText=ta.value.trim();
+  if(reflectionText.length<40){err.classList.add('show');ta.focus();return;}
+  err.classList.remove('show'); showResults();
+}
+
+// RESULTS
+function showResults(){
+  document.getElementById('reflection-gate-screen').classList.remove('active');
+  document.getElementById('complete-screen').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('final-score-display').textContent=`${finalScore}/${CYCLE_MAX_SCORE}`;
+  document.getElementById('score-breakdown').innerHTML=[
+    ['Transactions (gameplay)',cycleScores.je,30],['Adjusting Entries (accounts)',cycleScores.adjCards,10],
+    ['Adjusting Entries (calculation)',cycleScores.adj,10],['Sort to Statements',cycleScores.classify,20],
+    ['Financial Statements',cycleScores.fs,20],['Completion',cycleScores.completion,10],
+  ].map(([l,e,mx])=>`<div class="score-row"><span class="score-row-label">${l}</span><span class="score-row-val">${e}/${mx}</span></div>`).join('');
+  // Show appropriate completion message
+  document.getElementById('badge-msg').style.display='block';
+  if(scormOK){
+    SCORM.save(finalScore);
+    const sm=document.getElementById('scorm-msg');
+    sm.style.display='block';
+    sm.textContent=`Score saved: ${finalScore}/${CYCLE_MAX_SCORE}. Download your reflection card before leaving this page.`;
+    const exitBtn=document.getElementById('exit-scorm-btn');
+    if(exitBtn) exitBtn.style.display='inline-block';
+    const exitNote=document.getElementById('exit-note');
+    if(exitNote) exitNote.style.display='block';
+  }
+  buildReflectionCard();
+}
+
+// REFLECTION CARD PNG
+function buildReflectionCard(){
+  const canvas=document.getElementById('reflection-canvas');
+  const W=700,H=560; canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#262D68'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#FF9F1C'; ctx.fillRect(0,0,W,8); ctx.fillRect(0,H-8,W,8);
+  ctx.fillStyle='#FF9F1C'; ctx.font='bold 26px Arial'; ctx.textAlign='center';
+  ctx.fillText('Boardwalk Books LLC',W/2,50);
+  ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.font='12px Arial';
+  ctx.fillText('Crestwood Heights \u2022 Accounting Cycle Game',W/2,70);
+  ctx.fillStyle='rgba(255,159,28,0.4)'; ctx.fillRect(40,82,W-80,1);
+  ctx.fillStyle='white'; ctx.font='bold 17px Arial'; ctx.textAlign='left';
+  ctx.fillText(`Student: ${playerName}`,48,108);
+  ctx.fillStyle='#FF9F1C'; ctx.font='bold 20px Arial'; ctx.textAlign='right';
+  ctx.fillText(`Score: ${finalScore}/${CYCLE_MAX_SCORE}`,W-48,108);
+  ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='11px Arial'; ctx.textAlign='left';
+  ctx.fillText(`Date: ${new Date().toLocaleDateString()}`,48,126);
+  const levelLabel=gameLevel===1?'Level 1: Getting Started':gameLevel===2?'Level 2: Building Equity':'Level 3: Full Portfolio';
+  const stdLabel=accountingStandard==='ifrs'?'IFRS':'US GAAP';
+  ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='11px Arial'; ctx.textAlign='left';
+  ctx.fillText(`Level: ${levelLabel}  \u2022  Standard: ${stdLabel}`,48,142);
+  ctx.fillStyle='rgba(255,159,28,0.3)'; ctx.fillRect(40,154,W-80,1);
+
+  ctx.fillStyle='#FF9F1C'; ctx.font='bold 12px Arial'; ctx.textAlign='left';
+  ctx.fillText('SCORE BREAKDOWN',48,176);
+  const breakdown=[
+    ['Transactions (gameplay)',cycleScores.je,30],
+    ['Adjusting Entries (accounts)',cycleScores.adjCards,10],
+    ['Adjusting Entries (calculation)',cycleScores.adj,10],
+    ['Sort to Statements',cycleScores.classify,20],
+    ['Financial Statements',cycleScores.fs,20],
+    ['Completion',cycleScores.completion,10],
+  ];
+  let by=196;
+  breakdown.forEach(([label,earned,max])=>{
+    ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.font='13px Arial'; ctx.textAlign='left';
+    ctx.fillText(label,48,by);
+    ctx.fillStyle='white'; ctx.font='bold 13px Arial'; ctx.textAlign='right';
+    ctx.fillText(`${earned}/${max}`,W-48,by);
+    by+=19;
+  });
+  ctx.fillStyle='rgba(255,159,28,0.3)'; ctx.fillRect(40,by+6,W-80,1);
+
+  ctx.fillStyle='#FF9F1C'; ctx.font='bold 12px Arial'; ctx.textAlign='left';
+  ctx.fillText('REFLECTION',48,by+28);
+  ctx.fillStyle='white'; ctx.font='13px Arial';
+  const maxW=W-96,lineH=20; let y=by+46,line='';
+  reflectionText.split(' ').forEach(word=>{const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxW&&line){if(y>H-46){ctx.fillText('...',48,y);return;}ctx.fillText(line,48,y);line=word;y+=lineH;}else line=test;});
+  if(y<=H-46&&line) ctx.fillText(line,48,y);
+  ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='10px Arial'; ctx.textAlign='center';
+  ctx.fillText('Submit this reflection card to your instructor per course instructions.',W/2,H-28);
+  ctx.fillStyle='rgba(255,255,255,.35)'; ctx.font='9px Arial';
+  ctx.fillText('© 2026 Jennifer Coon. All rights reserved. Free for educational use. Not for resale.',W/2,H-10);
+  const dataURL=canvas.toDataURL('image/png');
+  const dlBtn=document.getElementById('download-card-btn');
+  dlBtn.href=dataURL; dlBtn.style.display='inline-block';
+}
+
+// KEYBOARD
+document.addEventListener('keydown',function(e){
+  // Escape closes CPU modal
+  if(e.key==='Escape'){
+    const modal=document.getElementById('cpu-modal');
+    if(modal&&!modal.classList.contains('hidden')){closeCPUModal();return;}
+  }
+  if(e.key!=='Enter')return;
+  const a=document.activeElement;
+  if(a&&a.classList.contains('check-input')){const m=a.id.match(/v(\d+)-input/);if(m)checkPhase(parseInt(m[1]));}
+});
+
+// SCORM deferred finish: called when student clicks exit or navigates away
+function exitSCORM(){
+  SCORM.finish();
+  // Update UI
+  const btn=document.getElementById('exit-scorm-btn');
+  if(btn){btn.textContent='✓ Score Submitted';btn.disabled=true;btn.style.opacity='.6';}
+  const note=document.getElementById('exit-note');
+  if(note){note.textContent='Your score has been submitted. You may now close this window.';note.style.color='var(--green)';}
+}
+
+// Fallback: call LMSFinish if student closes or navigates away without clicking exit
+// Also warn the student if they try to leave mid-game before downloading their reflection card
+window.addEventListener('beforeunload',function(e){
+  SCORM.finish();
+  if(playerRoundCount>0&&!gameOver){
+    e.preventDefault();
+    e.returnValue='You have unsaved game progress. If you leave now, your progress will be lost.';
+  }
+});
+</script>
+</body>
+</html>
